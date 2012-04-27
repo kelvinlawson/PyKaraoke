@@ -274,6 +274,7 @@ class pykManager:
             bufferSamples = p
 
         audioProps = (frequency, size, channels, bufferSamples)
+
         if audioProps != self.audioProps:
             # If the audio properties have changed, we have to shut
             # down and re-start the audio subsystem.
@@ -311,6 +312,8 @@ class pykManager:
         if not self.initialized:
             return
         self.initialized = False
+
+        self.display = None
 
         pygame.quit()
 

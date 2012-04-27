@@ -31,7 +31,7 @@ import os
 class pykPlayer:
     def __init__(self, song, songDb,
                  errorNotifyCallback = None, doneCallback = None,
-                 windowTitle = None):
+                 windowTitle = None, quitCallback = None):
         """The first parameter, song, may be either a pykdb.SongStruct
         instance, or it may be a filename. """
 
@@ -93,6 +93,8 @@ class pykPlayer:
             self.SongFinishedCallback = doneCallback
         else:
             self.SongFinishedCallback = None
+
+        self.quitCallback = quitCallback
 
         self.State = STATE_INIT
         self.InternalOffsetTime = 0
@@ -156,6 +158,8 @@ class pykPlayer:
     # Close the whole thing down
     def Close(self):
         self.State = STATE_CLOSING
+        if self.quitCallback != None:
+            self.quitCallback()
 
     # you must call Play() to restart. Blocks until pygame is initialised
     def Rewind(self):
