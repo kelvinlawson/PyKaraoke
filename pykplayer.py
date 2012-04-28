@@ -95,7 +95,7 @@ class pykPlayer:
             self.SongFinishedCallback = None
 
         if quitCallback:
-            self.quitCallback = doneCallback
+            self.quitCallback = quitCallback
         else:
             self.quitCallback = None
 
