@@ -94,7 +94,10 @@ class pykPlayer:
         else:
             self.SongFinishedCallback = None
 
-        self.quitCallback = quitCallback
+        if quitCallback:
+            self.quitCallback = doneCallback
+        else:
+            self.quitCallback = None
 
         self.State = STATE_INIT
         self.InternalOffsetTime = 0

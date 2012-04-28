@@ -123,11 +123,13 @@ except ImportError:
 # mpgPlayer Class
 class mpgPlayer(pykPlayer):
     # Initialise the player instace
-    def __init__(self, song, songDb, errorNotifyCallback=None, doneCallback=None):
+    def __init__(self, song, songDb,
+                 errorNotifyCallback = None, doneCallback = None,
+                 windowTitle = None, quitCallback = None):
         """The first parameter, song, may be either a pykdb.SongStruct
         instance, or it may be a filename. """
 
-        pykPlayer.__init__(self, song, songDb, errorNotifyCallback, doneCallback)
+        pykPlayer.__init__(self, song, songDb, errorNotifyCallback, doneCallback, windowTitle, quitCallback)
 
         self.Movie = None
 

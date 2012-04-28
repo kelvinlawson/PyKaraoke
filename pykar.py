@@ -967,11 +967,13 @@ def varLength(filehdl):
 
 
 class midPlayer(pykPlayer):
-    def __init__(self, song, songDb, errorNotifyCallback=None, doneCallback=None):
+    def __init__(self, song, songDb,
+                 errorNotifyCallback = None, doneCallback = None,
+                 windowTitle = None, quitCallback = None):
         """The first parameter, song, may be either a pykdb.SongStruct
         instance, or it may be a filename. """
 
-        pykPlayer.__init__(self, song, songDb, errorNotifyCallback, doneCallback)
+        pykPlayer.__init__(self, song, songDb, errorNotifyCallback, doneCallback, windowTitle, quitCallback)
         settings = self.songDb.Settings
 
         self.SupportsFontZoom = True
