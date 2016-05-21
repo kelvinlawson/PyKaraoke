@@ -206,12 +206,13 @@ TILE_HEIGHT             = CDG_DISPLAY_HEIGHT / TILES_PER_COL
 # cdgPlayer Class
 class cdgPlayer(pykPlayer):
     # Initialise the player instace
-    def __init__(self, song, songDb, errorNotifyCallback=None,
-                 doneCallback=None):
+    def __init__(self, song, songDb,
+                 errorNotifyCallback = None, doneCallback = None,
+                 windowTitle = None, quitCallback = None):
         """The first parameter, song, may be either a pykdb.SongStruct
         instance, or it may be a filename. """
 
-        pykPlayer.__init__(self, song, songDb, errorNotifyCallback, doneCallback)
+        pykPlayer.__init__(self, song, songDb, errorNotifyCallback, doneCallback, windowTitle, quitCallback)
 
         # With the nomusic option no music will be played.
         soundFileData = None

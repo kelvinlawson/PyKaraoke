@@ -1,0 +1,6 @@
+#General stuff
+*.pyc
+*~
+
+#Build files
+build/
