@@ -29,12 +29,12 @@ class PerformerPrompt(wx.Dialog):
     """ An interface for requesting a performer's name. """
     def __init__(self, parent):
         """ Creates the interface. """
-        wx.Dialog.__init__(self, parent, -1, "Karaoke Performer Prompt")
+        wx.Dialog.__init__(self, parent, -1, "Karaoke Performer ?")
 
         # Add the performer prompt
-        self.PerformerText = wx.StaticText(self, wx.ID_ANY, "Performer Name:")
+        self.PerformerText = wx.StaticText(self, wx.ID_ANY, "Name:")
         self.PerformerID = wx.NewId()
-        self.PerformerTxtCtrl = wx.TextCtrl(self, self.PerformerID, "", size=(150, 20), style=wx.TE_PROCESS_ENTER)
+        self.PerformerTxtCtrl = wx.TextCtrl(self, self.PerformerID, "", size=(150, 25), style=wx.TE_PROCESS_ENTER)
         self.PerformerSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.PerformerSizer.Add(self.PerformerText, 0, wx.ALL)
         self.PerformerSizer.Add(self.PerformerTxtCtrl, 0, wx.ALL)
@@ -43,6 +43,7 @@ class PerformerPrompt(wx.Dialog):
         self.ButtonSizer = self.CreateButtonSizer(wx.OK | wx.CANCEL)
         self.Bind(wx.EVT_BUTTON, self.onOK, id = wx.ID_OK)
         self.Bind(wx.EVT_BUTTON, self.onCANCEL, id = wx.ID_CANCEL)
+        self.PerformerTxtCtrl.Bind(wx.EVT_TEXT_ENTER, self.onENTER, id = wx.ID_ANY)
 
         # Create GUI with Sizers
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -52,11 +53,18 @@ class PerformerPrompt(wx.Dialog):
 
         self.performer = ""
         self.PerformerTxtCtrl.SetFocus()
+        
+    def onENTER(self, event):
+		print "Enter Captured"
+		""" Sets the performer entered and closes the dialogue. """
+		self.performer = self.PerformerTxtCtrl.GetValue()
+		self.EndModal(wx.ID_OK)
+		return True
 
     def onCANCEL(self, event):
         """ Sets the performer entered and closes the dialogue. """
-        self.performer = ""
-        self.EndModal(wx.ID_CANCEL)
+        self.performer = "Unknown"
+        self.EndModal(wx.ID_OK)
         return False
 
     def onOK(self, event):
