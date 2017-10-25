@@ -1849,10 +1849,11 @@ class SearchResultsPanel (wx.Panel):
         self.mainWindow = mainWindow
 
         self.SearchText = wx.TextCtrl(self, -1, style=wx.TE_PROCESS_ENTER)
-        self.SearchButton = wx.Button(self, -1, "Search")
         self.SearchSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SearchSizer.Add(self.SearchText, 1, wx.EXPAND, 5)
-        self.SearchSizer.Add(self.SearchButton, 0, wx.EXPAND, 5)
+
+        # Search window event handler
+        self.SearchText.Bind(wx.EVT_KEY_UP, self.OnTextEntered)
 
         self.ListPanel = wx.ListCtrl(self, -1, style = wx.LC_REPORT | wx.SUNKEN_BORDER | wx.LC_SORT_ASCENDING)
         self.ListPanel.Show(True)
@@ -1889,9 +1890,7 @@ class SearchResultsPanel (wx.Panel):
         self.Show(True)
 
         wx.EVT_LIST_ITEM_ACTIVATED(self, wx.ID_ANY, self.OnFileSelected)
-        wx.EVT_BUTTON(self, wx.ID_ANY, self.OnSearchClicked)
-        wx.EVT_TEXT_ENTER(self, wx.ID_ANY, self.OnSearchClicked)
-
+        
         # Add handlers for right-click in the results box
         self.RightClickedItemIndex = -1
         wx.EVT_LIST_ITEM_RIGHT_CLICK(self.ListPanel, wx.ID_ANY, self.OnRightClick)
@@ -1944,6 +1943,27 @@ class SearchResultsPanel (wx.Panel):
             for song in self.getSelectedSongs():
                 self.KaraokeMgr.AddToPlaylist(song, self)
 
+    def OnTextEntered(self, event):
+		
+		# Simple filter to prevent searches on control codes
+		keycode = event.GetKeyCode()
+		
+		if keycode > 31:
+			if keycode < 127:
+				
+				# See how manay characters have been entered
+				l = self.SearchText.GetLineLength(0)
+
+				if l > 7:
+					# Set a minimum number of characters before searching, to limit
+					# the number of songs found to a sensible number
+					self.SearchText.SetEditable(False)
+					self.SearchText.SetBackgroundColour((255,23,23))
+					self.OnSearchClicked(event)
+					self.SearchText.SetBackgroundColour((255,255,255))
+					self.SearchText.SetEditable(True)
+			
+		
     def OnSearchClicked(self, event):
         """ Handle the search button clicked event """
         # Check to see if it will load the entire database
@@ -1969,7 +1989,6 @@ class SearchResultsPanel (wx.Panel):
             else:
                 self.StatusBar.SetStatusText ("No Songs In Song Database")
         elif len(songList) == 0:
-            ErrorPopup("No Matches Found For " + self.SearchText.GetValue())
             self.StatusBar.SetStatusText ("No Matches Found")
         else:
             self.ListPanel.DeleteAllItems()
@@ -2346,19 +2365,19 @@ class Playlist (wx.Panel):
             col_cnt = col_cnt + 1
             self.ArtistCol = col_cnt
             col_cnt = col_cnt + 1
-            self.Playlist.InsertColumn(self.TitleCol, PLAY_COL_TITLE)
-            self.Playlist.InsertColumn(self.ArtistCol, PLAY_COL_ARTIST)
+            self.Playlist.InsertColumn(self.TitleCol, PLAY_COL_TITLE, width=100)
+            self.Playlist.InsertColumn(self.ArtistCol, PLAY_COL_ARTIST, width=100)
         # Otherwise display the filename column instead
         else:
             self.FilenameCol = col_cnt
             col_cnt = col_cnt + 1
-            self.Playlist.InsertColumn(self.FilenameCol, PLAY_COL_FILENAME)
+            self.Playlist.InsertColumn(self.FilenameCol, PLAY_COL_FILENAME, width=200)
 
         # Display the performer's name column if configured to do so
         if self.KaraokeMgr.SongDB.Settings.UsePerformerName:
             self.PerformerCol = col_cnt
             col_cnt = col_cnt + 1
-            self.Playlist.InsertColumn(self.PerformerCol, PLAY_COL_PERFORMER)
+            self.Playlist.InsertColumn(self.PerformerCol, PLAY_COL_PERFORMER, width=75)
         
         # Finished adding columns, show the panel
         self.NumColumns = col_cnt
@@ -3390,11 +3409,15 @@ class PyKaraokeWindow (wx.Frame):
         self.RightSizer.Add(self.PlaylistPanel, 1, wx.ALL | wx.EXPAND, 5)
         self.rightPanel.SetSizer(self.RightSizer)
 
+        # Set the initial screen sizes at start up
         if manager.settings.SplitVertically:
-            self.splitter.SplitVertically(self.leftPanel, self.rightPanel, 0.5)
+            self.splitter.SplitVertically(self.leftPanel, self.rightPanel)
         else:
-            self.splitter.SplitHorizontally(self.leftPanel, self.rightPanel, 0.5)
+            self.splitter.SplitHorizontally(self.leftPanel, self.rightPanel)
         self.splitter.SetMinimumPaneSize(1)
+        
+        # Make the two panels equal size by default
+        self.splitter.SetSashGravity(0.5)
 
         # Default start in Search View
         self.LeftSizer.Show(self.TreePanel, False)
