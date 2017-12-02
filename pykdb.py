@@ -835,6 +835,18 @@ class SettingsStruct:
         self.Version = SETTINGS_VERSION
 
         # Set the default settings, in case none are stored on disk
+        # FX1 - FX0 are the ten pre-defined sound effects buttons
+        self.FX1 = ""
+        self.FX2 = ""
+        self.FX3 = ""
+        self.FX4 = ""
+        self.FX5 = ""
+        self.FX6 = ""
+        self.FX7 = ""
+        self.FX8 = ""
+        self.FX9 = ""
+        self.FX0 = ""
+        
         self.FolderList = []
         self.CdgExtensions = [ '.cdg' ]
         self.KarExtensions = [ '.kar', '.mid' ]

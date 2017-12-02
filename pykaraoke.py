@@ -149,6 +149,7 @@ from pykmanager import manager
 import random
 import performer_prompt as PerformerPrompt
 import glob
+import wx.html
 
 # Constants
 PLAY_COL_TITLE =      "Title"
@@ -186,8 +187,8 @@ class wxBusyCancelDialog(wx.ProgressDialog, pykdb.BusyCancelDialog):
 # new folder scan to fill the database etc.
 class DatabaseSetupWindow (wx.Frame):
     def __init__(self,parent,id,title,KaraokeMgr):
-        wx.Frame.__init__(self,parent,wx.ID_ANY, title,
-                          style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+#        wx.Frame.__init__(self,parent,wx.ID_ANY, title, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
         self.KaraokeMgr = KaraokeMgr
 
         self.panel = wx.Panel(self)
@@ -320,13 +321,14 @@ class DatabaseSetupWindow (wx.Frame):
         psizer.Add(self.panel, flag = wx.EXPAND, proportion = 1)
         self.SetSizerAndFit(psizer)
 
-        pos = parent.GetPosition()
-        parentSize = parent.GetSize()
-        thisSize = self.GetSize()
-        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
-        pos[1] += (parentSize[1] / 2) - (thisSize[1] / 2)
-        self.SetPosition(pos)
+#        pos = parent.GetPosition()
+#        parentSize = parent.GetSize()
+#        thisSize = self.GetSize()
+#        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
+#        pos[1] += (parentSize[1] / 2) - (thisSize[1] / 2)
+#        self.SetPosition(pos)
 
+        self.Centre()
         self.Show()
 
     # User wants to add a folder
@@ -461,8 +463,8 @@ class DatabaseSetupWindow (wx.Frame):
 # Popup config window for setting full-screen mode etc
 class ConfigWindow (wx.Frame):
     def __init__(self,parent,id,title,KaraokeMgr):
-        wx.Frame.__init__(self, parent, -1, title,
-                          style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+#        wx.Frame.__init__(self, parent, -1, title, style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
         self.parent = parent
         self.panel = wx.Panel(self)
         self.KaraokeMgr = KaraokeMgr
@@ -498,13 +500,14 @@ class ConfigWindow (wx.Frame):
         psizer.Add(self.panel, flag = wx.EXPAND, proportion = 1)
         self.SetSizerAndFit(psizer)
 
-        pos = parent.GetPosition()
-        parentSize = parent.GetSize()
-        thisSize = self.GetSize()
-        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
-        pos[1] += max((parentSize[1] / 2) - (thisSize[1] / 2), 0)
-        self.SetPosition(pos)
+#        pos = parent.GetPosition()
+#        parentSize = parent.GetSize()
+#        thisSize = self.GetSize()
+#        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
+#        pos[1] += max((parentSize[1] / 2) - (thisSize[1] / 2), 0)
+#        self.SetPosition(pos)
 
+        self.Centre()
         self.Show()
 
     def __layoutDisplayPage(self):
@@ -959,10 +962,10 @@ class ConfigWindow (wx.Frame):
         # Save the auto play option
         if self.AutoPlayCheckBox.IsChecked():
             settings.AutoPlayList = True
-            self.parent.playlistButton.SetLabel('Start')
+#            self.parent.playlistButton.SetLabel('Start')
         else:
             settings.AutoPlayList = False
-            self.parent.playlistButton.SetLabel('Play')
+#            self.parent.playlistButton.SetLabel('Play')
 
         # Save the double-click play option
         if self.DoubleClickPlayCheckBox.IsChecked():
@@ -984,9 +987,9 @@ class ConfigWindow (wx.Frame):
             self.parent.Bind(wx.EVT_BUTTON, self.parent.OnKamikazeClicked, self.parent.playButton)
         else:
             settings.Kamikaze = False
-            self.parent.playButton.SetLabel('Play')
-            self.parent.Unbind(wx.EVT_BUTTON, self.parent.playButton)
-            self.parent.Bind(wx.EVT_BUTTON, self.parent.OnPlayClicked, self.parent.playButton)
+#            self.parent.playButton.SetLabel('Play')
+#            self.parent.Unbind(wx.EVT_BUTTON, self.parent.playButton)
+#            self.parent.Bind(wx.EVT_BUTTON, self.parent.OnPlayClicked, self.parent.playButton)
 
         # Save the performer option
         if self.PerformerCheckBox.IsChecked() != settings.UsePerformerName:
@@ -1158,6 +1161,7 @@ class Wx26AboutWindow(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, -1, 'About PyKaraoke',
                           style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+
         self.parent = parent
         self.__layoutWindow()
 
@@ -1338,8 +1342,8 @@ class EditTitlesWindow(wx.Frame):
     on-the-fly. """
 
     def __init__(self, parent, KaraokeMgr, songs):
-        wx.Frame.__init__(self, parent, -1, 'Edit artists / titles',
-                          style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+#        wx.Frame.__init__(self, parent, -1, 'Edit artists / titles', style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
+        wx.Frame.__init__(self, parent, wx.ID_ANY, 'Edit artists / titles', style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN)
         self.parent = parent
         self.KaraokeMgr = KaraokeMgr
         self.songs = songs
@@ -1501,258 +1505,258 @@ def ErrorPopup (ErrorString):
 # Folder View class subclassed from WxPanel, containing a WxTreeCtrl.
 # There is no built in file browser with WxPython, so this was
 # implemented using just a basic tree control.
-class FileTree (wx.Panel):
-    def __init__(self, parent, id, KaraokeMgr, x, y):
-        wx.Panel.__init__(self, parent, id)
-        self.KaraokeMgr = KaraokeMgr
-
-        # Create the tree control
-        TreeStyle = wx.TR_NO_LINES|wx.TR_HAS_BUTTONS|wx.SUNKEN_BORDER|wx.TR_MULTIPLE
-        self.FileTree = wx.TreeCtrl(self, -1, wx.Point(x, y), style=TreeStyle)
-        # Find the correct icons path. If fully installed on Linux this will
-        # be sys.prefix/share/pykaraoke/icons. Otherwise look for it in the
-        # current directory.
-        if (os.path.isfile("icons/folder_open_16.png")):
-            iconspath = "icons"
-        else:
-            iconspath = os.path.join(sys.prefix, "share/pykaraoke/icons")
-        self.FolderOpenIcon = wx.Bitmap(os.path.join(iconspath, "folder_open_16.png"))
-        self.FolderClosedIcon = wx.Bitmap(os.path.join(iconspath, "folder_close_16.png"))
-        self.FileIcon = wx.Bitmap(os.path.join(iconspath, "audio_16.png"))
-        self.ImageList = wx.ImageList(16, 16)
-        self.FolderOpenIconIndex = self.ImageList.Add(self.FolderOpenIcon)
-        self.FolderClosedIconIndex = self.ImageList.Add(self.FolderClosedIcon)
-        self.FileIconIndex = self.ImageList.Add(self.FileIcon)
-        self.FileTree.AssignImageList(self.ImageList)
-        self.CreateTreeRoot()
-        wx.EVT_TREE_ITEM_EXPANDING(self, wx.ID_ANY, self.OnFileExpand)
-        wx.EVT_TREE_ITEM_COLLAPSING(self, wx.ID_ANY, self.OnFileCollapse)
-        wx.EVT_TREE_ITEM_ACTIVATED(self, wx.ID_ANY, self.OnFileSelected)
-
-        # Create the status bar
-        self.StatusBar = wx.StatusBar(self, -1)
-        self.StatusBar.SetStatusText ("File Browser View")
-
-        # Create a sizer for the tree view and status bar
-        self.VertSizer = wx.BoxSizer(wx.VERTICAL)
-        self.VertSizer.Add(self.FileTree, 1, wx.EXPAND, 5)
-        self.VertSizer.Add(self.StatusBar, 0, wx.EXPAND, 5)
-        self.SetSizer(self.VertSizer)
-        self.Show(True)
-
-        # Add handlers for right-click in the results box
-        wx.EVT_TREE_ITEM_RIGHT_CLICK(self, wx.ID_ANY, self.OnRightClick)
-
-        # Create IDs for popup menu
-        self.menuPlayId = wx.NewId()
-        self.menuPlaylistAddId = wx.NewId()
-        self.menuFileDetailsId = wx.NewId()
-
-        # Set up drag into the playlist
-        self.FileTree.Bind(wx.EVT_TREE_BEGIN_DRAG, self.OnBeginDrag)
-
-    # Create the top-level filesystem entry. This is just root directory on Linux
-    # but on Windows we have to find out the drive letters and show those as
-    # multiple roots. There doesn't seem to be a portable way to do this with
-    # WxPython, so this had to check the OS and use the Win32 API if necessary.
-    def CreateTreeRoot(self):
-        # Get a drive list on Windows otherwise start at root
-        if env == ENV_WINDOWS:
-            try:
-                import win32api
-                drives = string.split(win32api.GetLogicalDriveStrings(),'\0')[:-1]
-            except ImportError:
-                # No win32api installed.  Just look for all the likely drive
-                # names exhaustively, excluding A and B (which are
-                # usually floppy drives and cause an annoying dialog
-                # to pop up).
-                drives = []
-                for letter in 'CDEFGHIJKLMNOPQRSTUVWXYZ':
-                    drive = '%s:\\' % (letter)
-                    if os.path.isdir(drive):
-                        drives.append(drive)
-
-            self.TreeRoot = self.FileTree.AddRoot("")
-            self.RootFolder = ""
-            for drive in drives:
-                node = self.FileTree.AppendItem(self.TreeRoot, drive, image=self.FolderClosedIconIndex)
-                self.FileTree.SetItemHasChildren(node, True)
-        else:
-            self.TreeRoot = self.FileTree.AddRoot("/")
-            self.RootFolder = "/"
-            # Populate the tree control for the root dir
-            self.PopulateFolder (self.TreeRoot)
-        # Start expanded
-        # Windows ? Alternatively traverse everything by hand as we know what's under root
-        self.FileTree.Expand(self.TreeRoot)
-
-    # Take a directory or file item in the tree and walk upwards to
-    # generate the full path-string
-    def GetFullPathForNode(self, tree_node):
-        full_path = self.FileTree.GetItemText(tree_node)
-        node = self.FileTree.GetItemParent(tree_node)
-        while node and node != self.FileTree.GetRootItem():
-            parent_text = self.FileTree.GetItemText(node)
-            full_path = os.path.join (parent_text, full_path)
-            node = self.FileTree.GetItemParent(node)
-        # Now add on the relevant root folder if necessary ("/" on Linux,
-        # nothing on Windows, the drive letter node is first ("g:\\")
-        full_path = os.path.join (self.RootFolder, full_path)
-        return full_path
-
-    # Fill up a folder with the files and subfolders it contains
-    def PopulateFolder(self, root_node):
-        # If was already expanded once, delete all children and rescan.
-        # Could just show the current files if this is inefficient.
-        self.FileTree.DeleteChildren(root_node)
-        # Make a sorted list of directories and one for files
-        full_path = self.GetFullPathForNode(root_node)
-        filedir_list = os.listdir(full_path)
-        dir_list = []
-        file_list = []
-        for item in filedir_list:
-            if os.path.isdir (os.path.join (full_path, item)):
-                dir_list.append(item)
-            else:
-                root, ext = os.path.splitext(item)
-                if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
-                    file_list.append(item)
-        dir_list.sort()
-        file_list.sort()
-
-        settings = self.KaraokeMgr.SongDB.Settings
-
-        # Populate the tree control, directories then files
-        for item in dir_list:
-            if isinstance(item, types.StringType):
-                item = item.decode(settings.FilesystemCoding)
-            try:
-                node = self.FileTree.AppendItem(root_node, item, image=self.FolderClosedIconIndex)
-            except UnicodeError:
-                node = self.FileTree.AppendItem(root_node, item.encode('UTF-8', 'replace'), image=self.FolderClosedIconIndex)
-
-            self.FileTree.SetItemHasChildren(node, True)
-        for item in file_list:
-            if isinstance(item, types.StringType):
-                item = item.decode(settings.FilesystemCoding)
-            try:
-                node = self.FileTree.AppendItem(root_node, item, image=self.FileIconIndex)
-            except UnicodeError:
-                node = self.FileTree.AppendItem(root_node, item.encode('UTF-8', 'replace'), image=self.FileIconIndex)
-            self.FileTree.SetItemBold(node)
-
-    def getSelectedSongs(self):
-        """ Returns a list of the selected songs. """
-
-        settings = self.KaraokeMgr.SongDB.Settings
-
-        songs = []
-        for selected_node in self.FileTree.GetSelections():
-            filename = self.FileTree.GetItemText(selected_node)
-            fullpath = self.GetFullPathForNode(selected_node)
-
-            song = pykdb.SongStruct(fullpath, settings, filename)
-            songs.append(song)
-
-        return songs
-
-    # Handle a folder expand event
-    def OnFileExpand(self, event):
-        expanded_node = event.GetItem()
-        self.PopulateFolder (expanded_node)
-        self.FileTree.SetItemImage(expanded_node, self.FolderOpenIconIndex)
-
-    # Handle a folder collapse event
-    def OnFileCollapse(self, event):
-        collapsed_node = event.GetItem()
-        self.FileTree.SetItemImage(collapsed_node, self.FolderClosedIconIndex)
-
-    # Handle a file selected event. Behaviour is different between Windows and
-    # Linux - on Linux a folder can be expanded by double-clicking it. On
-    # Windows the + box must be clicked to expand.
-    def OnFileSelected(self, event):
-        selected_node = event.GetItem()
-        filename = self.FileTree.GetItemText(selected_node)
-        full_path = self.GetFullPathForNode(selected_node)
-        if os.path.isdir(full_path):
-            if self.FileTree.IsExpanded(selected_node):
-                self.FileTree.Collapse(selected_node)
-                self.FileTree.SetItemImage(selected_node, self.FolderClosedIconIndex)
-            else:
-                self.PopulateFolder(selected_node)
-                # Windows ?
-                self.FileTree.Expand(selected_node)
-                self.FileTree.SetItemImage(selected_node, self.FolderOpenIconIndex)
-        else:
-            root, ext = os.path.splitext(filename)
-            if self.KaraokeMgr.SongDB.IsExtensionValid(ext) and os.path.isfile (full_path):
-                # Create a SongStruct because that's what karaoke mgr wants
-                settings = self.KaraokeMgr.SongDB.Settings
-                song = pykdb.SongStruct(full_path, settings, filename)
-                self.KaraokeMgr.PlayWithoutPlaylist(song)
-
-    # Handle a right-click on an item (show a popup)
-    def OnRightClick(self, event):
-        selected_node = event.GetItem()
-        self.PopupFilename = self.FileTree.GetItemText(selected_node)
-        self.PopupFullPath = self.GetFullPathForNode(selected_node)
-        # Only do a popup if it's not a directory (must be a karaoke song then
-        # due to the filtering)
-        if not os.path.isdir(self.PopupFullPath):
-            menu = wx.Menu()
-            menu.Append( self.menuPlayId, "Play song" )
-            wx.EVT_MENU( menu, self.menuPlayId, self.OnMenuSelection )
-            menu.Append( self.menuPlaylistAddId, "Add selected to playlist" )
-            wx.EVT_MENU( menu, self.menuPlaylistAddId, self.OnMenuSelection )
-            menu.Append( self.menuFileDetailsId, "File Details" )
-            wx.EVT_MENU( menu, self.menuFileDetailsId, self.OnMenuSelection )
-            self.PopupMenu( menu, event.GetPoint() )
-
-    # Handle the popup menu events
-    def OnMenuSelection( self, event ):
-        root, ext = os.path.splitext(self.PopupFilename)
-        if self.KaraokeMgr.SongDB.IsExtensionValid(ext) and os.path.isfile (self.PopupFullPath):
-            # Create a SongStruct because that's what karaoke mgr wants
-            settings = self.KaraokeMgr.SongDB.Settings
-            song = pykdb.SongStruct(self.PopupFullPath, settings, self.PopupFilename)
-            # Now respond to the menu choice
-            if event.GetId() == self.menuPlayId:
-                self.KaraokeMgr.PlayWithoutPlaylist(song)
-            elif event.GetId() == self.menuPlaylistAddId:
-                for song in self.getSelectedSongs():
-                    self.KaraokeMgr.AddToPlaylist(song, self)
-            elif event.GetId() == self.menuFileDetailsId:
-                wx.MessageBox("File: " + self.PopupFullPath, "File details", wx.OK)
-
-    # Start drag handler. Code from WxPython Wiki
-    def OnBeginDrag(self, event):
-        songs = self.getSelectedSongs()
-
-        if songs:
-            def DoDragDrop(songs = songs):
-                # Convert the songs list to a string. No extra data necessary
-                # for drag-drop from here, just the song struct.
-                data = SongStructDataObject(songs, None)
-
-                # Also store this data object in the globalDragObject pointer,
-                # to work around a wxPython bug.
-                global globalDragObject
-                globalDragObject = data
-
-                # Create drop source and begin drag-and-drop.
-                dropSource = wx.DropSource(self.FileTree)
-                dropSource.SetData(data)
-
-                # The docs say the parameter here should be one of
-                # wx.DragCopy/DragMove/etc., but in practice it appears that
-                # only wx.DragNone works on Windows.
-                if env == ENV_WINDOWS:
-                    res = dropSource.DoDragDrop(wx.DragNone)
-                else:
-                    res = dropSource.DoDragDrop(wx.DragCopy)
-
-            # Can't call dropSource.DoDragDrop here..
-            wx.CallAfter(DoDragDrop)
+#class FileTree (wx.Panel):
+#    def __init__(self, parent, id, KaraokeMgr, x, y):
+#        wx.Panel.__init__(self, parent, id)
+#        self.KaraokeMgr = KaraokeMgr
+#
+#        # Create the tree control
+#        TreeStyle = wx.TR_NO_LINES|wx.TR_HAS_BUTTONS|wx.SUNKEN_BORDER|wx.TR_MULTIPLE
+#        self.FileTree = wx.TreeCtrl(self, -1, wx.Point(x, y), style=TreeStyle)
+#        # Find the correct icons path. If fully installed on Linux this will
+#        # be sys.prefix/share/pykaraoke/icons. Otherwise look for it in the
+#        # current directory.
+#        if (os.path.isfile("icons/folder_open_16.png")):
+#            iconspath = "icons"
+#        else:
+#            iconspath = os.path.join(sys.prefix, "share/pykaraoke/icons")
+#        self.FolderOpenIcon = wx.Bitmap(os.path.join(iconspath, "folder_open_16.png"))
+#        self.FolderClosedIcon = wx.Bitmap(os.path.join(iconspath, "folder_close_16.png"))
+#        self.FileIcon = wx.Bitmap(os.path.join(iconspath, "audio_16.png"))
+#        self.ImageList = wx.ImageList(16, 16)
+#        self.FolderOpenIconIndex = self.ImageList.Add(self.FolderOpenIcon)
+#        self.FolderClosedIconIndex = self.ImageList.Add(self.FolderClosedIcon)
+#        self.FileIconIndex = self.ImageList.Add(self.FileIcon)
+#        self.FileTree.AssignImageList(self.ImageList)
+#        self.CreateTreeRoot()
+#        wx.EVT_TREE_ITEM_EXPANDING(self, wx.ID_ANY, self.OnFileExpand)
+#        wx.EVT_TREE_ITEM_COLLAPSING(self, wx.ID_ANY, self.OnFileCollapse)
+#        wx.EVT_TREE_ITEM_ACTIVATED(self, wx.ID_ANY, self.OnFileSelected)
+#
+#        # Create the status bar
+#        self.StatusBar = wx.StatusBar(self, -1)
+#        self.StatusBar.SetStatusText ("File Browser View")
+#
+#        # Create a sizer for the tree view and status bar
+#        self.VertSizer = wx.BoxSizer(wx.VERTICAL)
+#        self.VertSizer.Add(self.FileTree, 1, wx.EXPAND, 5)
+#        self.VertSizer.Add(self.StatusBar, 0, wx.EXPAND, 5)
+#        self.SetSizer(self.VertSizer)
+#        self.Show(True)
+#
+#        # Add handlers for right-click in the results box
+#        wx.EVT_TREE_ITEM_RIGHT_CLICK(self, wx.ID_ANY, self.OnRightClick)
+#
+#        # Create IDs for popup menu
+#        self.menuPlayId = wx.NewId()
+#        self.menuPlaylistAddId = wx.NewId()
+#        self.menuFileDetailsId = wx.NewId()
+#
+#        # Set up drag into the playlist
+#        self.FileTree.Bind(wx.EVT_TREE_BEGIN_DRAG, self.OnBeginDrag)
+#
+#    # Create the top-level filesystem entry. This is just root directory on Linux
+#    # but on Windows we have to find out the drive letters and show those as
+#    # multiple roots. There doesn't seem to be a portable way to do this with
+#    # WxPython, so this had to check the OS and use the Win32 API if necessary.
+#    def CreateTreeRoot(self):
+#        # Get a drive list on Windows otherwise start at root
+#        if env == ENV_WINDOWS:
+#            try:
+#                import win32api
+#                drives = string.split(win32api.GetLogicalDriveStrings(),'\0')[:-1]
+#            except ImportError:
+#                # No win32api installed.  Just look for all the likely drive
+#                # names exhaustively, excluding A and B (which are
+#                # usually floppy drives and cause an annoying dialog
+#                # to pop up).
+#                drives = []
+#                for letter in 'CDEFGHIJKLMNOPQRSTUVWXYZ':
+#                    drive = '%s:\\' % (letter)
+#                    if os.path.isdir(drive):
+#                        drives.append(drive)
+#
+#            self.TreeRoot = self.FileTree.AddRoot("")
+#            self.RootFolder = ""
+#            for drive in drives:
+#                node = self.FileTree.AppendItem(self.TreeRoot, drive, image=self.FolderClosedIconIndex)
+#                self.FileTree.SetItemHasChildren(node, True)
+#        else:
+#            self.TreeRoot = self.FileTree.AddRoot("/")
+#            self.RootFolder = "/"
+#            # Populate the tree control for the root dir
+#            self.PopulateFolder (self.TreeRoot)
+#        # Start expanded
+#        # Windows ? Alternatively traverse everything by hand as we know what's under root
+#        self.FileTree.Expand(self.TreeRoot)
+#
+#    # Take a directory or file item in the tree and walk upwards to
+#    # generate the full path-string
+#    def GetFullPathForNode(self, tree_node):
+#        full_path = self.FileTree.GetItemText(tree_node)
+#        node = self.FileTree.GetItemParent(tree_node)
+#        while node and node != self.FileTree.GetRootItem():
+#            parent_text = self.FileTree.GetItemText(node)
+#            full_path = os.path.join (parent_text, full_path)
+#            node = self.FileTree.GetItemParent(node)
+#        # Now add on the relevant root folder if necessary ("/" on Linux,
+#        # nothing on Windows, the drive letter node is first ("g:\\")
+#        full_path = os.path.join (self.RootFolder, full_path)
+#        return full_path
+#
+#    # Fill up a folder with the files and subfolders it contains
+#    def PopulateFolder(self, root_node):
+#        # If was already expanded once, delete all children and rescan.
+#        # Could just show the current files if this is inefficient.
+#        self.FileTree.DeleteChildren(root_node)
+#        # Make a sorted list of directories and one for files
+#        full_path = self.GetFullPathForNode(root_node)
+#        filedir_list = os.listdir(full_path)
+#        dir_list = []
+#        file_list = []
+#        for item in filedir_list:
+#            if os.path.isdir (os.path.join (full_path, item)):
+#                dir_list.append(item)
+#            else:
+#                root, ext = os.path.splitext(item)
+#                if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+#                    file_list.append(item)
+#        dir_list.sort()
+#        file_list.sort()
+#
+#        settings = self.KaraokeMgr.SongDB.Settings
+#
+#        # Populate the tree control, directories then files
+#        for item in dir_list:
+#            if isinstance(item, types.StringType):
+#                item = item.decode(settings.FilesystemCoding)
+#            try:
+#                node = self.FileTree.AppendItem(root_node, item, image=self.FolderClosedIconIndex)
+#            except UnicodeError:
+#                node = self.FileTree.AppendItem(root_node, item.encode('UTF-8', 'replace'), image=self.FolderClosedIconIndex)
+#
+#            self.FileTree.SetItemHasChildren(node, True)
+#        for item in file_list:
+#            if isinstance(item, types.StringType):
+#                item = item.decode(settings.FilesystemCoding)
+#            try:
+#                node = self.FileTree.AppendItem(root_node, item, image=self.FileIconIndex)
+#            except UnicodeError:
+#                node = self.FileTree.AppendItem(root_node, item.encode('UTF-8', 'replace'), image=self.FileIconIndex)
+#            self.FileTree.SetItemBold(node)
+#
+#    def getSelectedSongs(self):
+#        """ Returns a list of the selected songs. """
+#
+#        settings = self.KaraokeMgr.SongDB.Settings
+#
+#        songs = []
+#        for selected_node in self.FileTree.GetSelections():
+#            filename = self.FileTree.GetItemText(selected_node)
+#            fullpath = self.GetFullPathForNode(selected_node)
+#
+#            song = pykdb.SongStruct(fullpath, settings, filename)
+#            songs.append(song)
+#
+#        return songs
+#
+#    # Handle a folder expand event
+#    def OnFileExpand(self, event):
+#        expanded_node = event.GetItem()
+#        self.PopulateFolder (expanded_node)
+#        self.FileTree.SetItemImage(expanded_node, self.FolderOpenIconIndex)
+#
+#    # Handle a folder collapse event
+#    def OnFileCollapse(self, event):
+#        collapsed_node = event.GetItem()
+#        self.FileTree.SetItemImage(collapsed_node, self.FolderClosedIconIndex)
+#
+#    # Handle a file selected event. Behaviour is different between Windows and
+#    # Linux - on Linux a folder can be expanded by double-clicking it. On
+#    # Windows the + box must be clicked to expand.
+#    def OnFileSelected(self, event):
+#        selected_node = event.GetItem()
+#        filename = self.FileTree.GetItemText(selected_node)
+#        full_path = self.GetFullPathForNode(selected_node)
+#        if os.path.isdir(full_path):
+#            if self.FileTree.IsExpanded(selected_node):
+#                self.FileTree.Collapse(selected_node)
+#                self.FileTree.SetItemImage(selected_node, self.FolderClosedIconIndex)
+#            else:
+#                self.PopulateFolder(selected_node)
+#                # Windows ?
+#                self.FileTree.Expand(selected_node)
+#                self.FileTree.SetItemImage(selected_node, self.FolderOpenIconIndex)
+#        else:
+#            root, ext = os.path.splitext(filename)
+#            if self.KaraokeMgr.SongDB.IsExtensionValid(ext) and os.path.isfile (full_path):
+#                # Create a SongStruct because that's what karaoke mgr wants
+#                settings = self.KaraokeMgr.SongDB.Settings
+#                song = pykdb.SongStruct(full_path, settings, filename)
+#                self.KaraokeMgr.PlayWithoutPlaylist(song)
+#
+#    # Handle a right-click on an item (show a popup)
+#    def OnRightClick(self, event):
+#        selected_node = event.GetItem()
+#        self.PopupFilename = self.FileTree.GetItemText(selected_node)
+#        self.PopupFullPath = self.GetFullPathForNode(selected_node)
+#        # Only do a popup if it's not a directory (must be a karaoke song then
+#        # due to the filtering)
+#        if not os.path.isdir(self.PopupFullPath):
+#            menu = wx.Menu()
+#            menu.Append( self.menuPlayId, "Play song" )
+#            wx.EVT_MENU( menu, self.menuPlayId, self.OnMenuSelection )
+#            menu.Append( self.menuPlaylistAddId, "Add selected to playlist" )
+#            wx.EVT_MENU( menu, self.menuPlaylistAddId, self.OnMenuSelection )
+#            menu.Append( self.menuFileDetailsId, "File Details" )
+#            wx.EVT_MENU( menu, self.menuFileDetailsId, self.OnMenuSelection )
+#            self.PopupMenu( menu, event.GetPoint() )
+#
+#    # Handle the popup menu events
+#    def OnMenuSelection( self, event ):
+#        root, ext = os.path.splitext(self.PopupFilename)
+#        if self.KaraokeMgr.SongDB.IsExtensionValid(ext) and os.path.isfile (self.PopupFullPath):
+#            # Create a SongStruct because that's what karaoke mgr wants
+#            settings = self.KaraokeMgr.SongDB.Settings
+#            song = pykdb.SongStruct(self.PopupFullPath, settings, self.PopupFilename)
+#            # Now respond to the menu choice
+#            if event.GetId() == self.menuPlayId:
+#                self.KaraokeMgr.PlayWithoutPlaylist(song)
+#            elif event.GetId() == self.menuPlaylistAddId:
+#                for song in self.getSelectedSongs():
+#                    self.KaraokeMgr.AddToPlaylist(song, self)
+#            elif event.GetId() == self.menuFileDetailsId:
+#                wx.MessageBox("File: " + self.PopupFullPath, "File details", wx.OK)
+#
+#    # Start drag handler. Code from WxPython Wiki
+#    def OnBeginDrag(self, event):
+#        songs = self.getSelectedSongs()
+#
+#        if songs:
+#            def DoDragDrop(songs = songs):
+#                # Convert the songs list to a string. No extra data necessary
+#                # for drag-drop from here, just the song struct.
+#                data = SongStructDataObject(songs, None)
+#
+#                # Also store this data object in the globalDragObject pointer,
+#                # to work around a wxPython bug.
+#                global globalDragObject
+#                globalDragObject = data
+#
+#                # Create drop source and begin drag-and-drop.
+#                dropSource = wx.DropSource(self.FileTree)
+#                dropSource.SetData(data)
+#
+#                # The docs say the parameter here should be one of
+#                # wx.DragCopy/DragMove/etc., but in practice it appears that
+#                # only wx.DragNone works on Windows.
+#                if env == ENV_WINDOWS:
+#                    res = dropSource.DoDragDrop(wx.DragNone)
+#                else:
+#                    res = dropSource.DoDragDrop(wx.DragCopy)
+#
+#            # Can't call dropSource.DoDragDrop here..
+#            wx.CallAfter(DoDragDrop)
 
 
 # This defines a custom "format" for our local drag-and-drop data
@@ -1908,7 +1912,7 @@ class SearchResultsPanel (wx.Panel):
         wx.EVT_LIST_ITEM_RIGHT_CLICK(self.ListPanel, wx.ID_ANY, self.OnRightClick)
 
         # Resize column width to the same as list width
-        wx.EVT_SIZE(self.ListPanel, self.onResize)
+        wx.EVT_SIZE(self.ListPanel, self.OnResize)
 
         # Create IDs for popup menu
         self.menuPlayId = wx.NewId()
@@ -2130,13 +2134,13 @@ class SearchResultsPanel (wx.Panel):
             except UnicodeDecodeError:
                 wx.MessageBox(detailsString.decode('ascii', 'replace'), song.DisplayFilename, wx.OK)
 
-    def onResize(self, event):
+    def OnResize(self, event):
         event.Skip()
         width = self.ListPanel.GetClientSize().width
         width = width/6
         self.ListPanel.SetColumnWidth(0, width*3)
         self.ListPanel.SetColumnWidth(1, width*2)
-        self.ListPanel.SetColumnWidth(2, width)		
+        self.ListPanel.SetColumnWidth(2, width)
         
 
     def GetSelections(self, state =  wx.LIST_STATE_SELECTED):
@@ -2218,7 +2222,7 @@ class Playlist (wx.Panel):
 #        self.MaxPerformerWidth = 0
 
         # Resize column width to the same as list width (or max title width, which larger)
-        wx.EVT_SIZE(self.Playlist, self.onResize)
+        wx.EVT_SIZE(self.Playlist, self.OnResize)
 
         # Create IDs for popup menu
         self.menuPlayId = wx.NewId()
@@ -2309,10 +2313,19 @@ class Playlist (wx.Panel):
         elif self.KaraokeMgr.SongDB.Settings.ClearFromPlayList and (event.GetId() == self.menuClearListId):
             self.clear()
 
+
     def play(self):
         """ Start the playlist playing. """
         if self.Playlist.GetItemCount() > 0:
-            self.KaraokeMgr.PlaylistStart(self.Playlist.GetFirstSelected(), self)
+#            self.KaraokeMgr.PlaylistStart(self.Playlist.GetFirstSelected(), self)
+
+            sel = self.Playlist.GetFirstSelected()
+            if sel == -1:
+				sel = 0
+            self.KaraokeMgr.PlaylistStart(sel, self)
+#            self.Playlist.DeleteItem(sel)
+#            self.PlaylistSongStructList.pop(sel)
+
 
     def clear(self):
         sel = self.Playlist.GetFirstSelected()
@@ -2328,7 +2341,7 @@ class Playlist (wx.Panel):
 #        self.MaxArtistWidth = 0
 #        self.MaxPerformerWidth = 0
 
-    def onResize(self, event):
+    def OnResize(self, event):
         event.Skip()
         width = self.Playlist.GetClientSize().width
         width = width/6
@@ -3093,7 +3106,7 @@ class TabOne(wx.Panel):
         
         bmp = wx.Bitmap("Arrow.png", wx.BITMAP_TYPE_PNG)
         b = wx.BitmapButton(self.panelOne, id = wx.ID_ANY, bitmap = bmp, size = (60, 30)) 
-        self.Bind(wx.EVT_BUTTON, self.OnPlaylistClicked, b)
+        self.Bind(wx.EVT_BUTTON, self.AddToPlayList, b)
         hsizer.Add(b, flag = wx.EXPAND)
 
         # Add the row to the main vertical sizer
@@ -3176,7 +3189,7 @@ class TabOne(wx.Panel):
         self.KaraokeMgr.PlayWithoutPlaylist(songs[0])
 
 
-    def OnPlaylistClicked(self, event):
+    def AddToPlayList(self, event):
 		# Add a song to panel 2 the play list panel
         songs = self.SearchPanel.getSelectedSongs()
 
@@ -3186,7 +3199,7 @@ class TabOne(wx.Panel):
 
         for song in songs:
             self.UpdateVolume()
-            self.KaraokeMgr.AddToPlaylist(song, self)
+            self.KaraokeMgr.AddToPlaylist(song, self, 1)
 
             
     def OnStartPlaylistClicked(self, event):
@@ -3230,7 +3243,7 @@ class TabTwo(wx.Panel):
         hsizer.AddStretchSpacer(5)
         bmp = wx.Bitmap("Music.png", wx.BITMAP_TYPE_PNG)
         btn = wx.BitmapButton(self.panelOne, id = wx.ID_ANY, bitmap = bmp, size = (40, 30)) 
-        self.Bind(wx.EVT_BUTTON, self.onOpenDirectory, btn)
+        self.Bind(wx.EVT_BUTTON, self.OnOpenDirectory, btn)
         hsizer.Add(btn, flag = wx.EXPAND)
         
         bmp = wx.Bitmap("Arrow.png", wx.BITMAP_TYPE_PNG)
@@ -3248,7 +3261,7 @@ class TabTwo(wx.Panel):
         self.panelOne.SetSizer(self.panelOneSizer)
 
         # Resize column width to the same as list width (or max title width, which larger)
-        wx.EVT_SIZE(self.list_ctrl, self.onResize)
+        wx.EVT_SIZE(self.list_ctrl, self.OnResize)
 
         # Panel Two
         self.panelTwoSizer = wx.BoxSizer(wx.VERTICAL)
@@ -3290,25 +3303,30 @@ class TabTwo(wx.Panel):
         self.MainSizer.Add(self.splitter, 1, wx.ALL | wx.EXPAND)
         self.SetAutoLayout(True)
         self.SetSizer(self.MainSizer)
+        
+        # Message subscriptions
+        pub.subscribe(self.PlaySomething, 'playsomething.update')
 
 
-    def onResize(self, event):
+    def PlaySomething(self, status):
+        self.PlaylistPanel.play()
+		
+    def OnResize(self, event):
         event.Skip()
         width = self.list_ctrl.GetClientSize().width
         self.list_ctrl.SetColumnWidth(0, width)
 
 
-    def onOpenDirectory(self, event):
+    def OnOpenDirectory(self, event):
         # Panel 1 btn pressed
-		
         dlg = wx.DirDialog(self, "Choose a directory:")
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
-            self.updateDisplay(path)
+            self.UpdateDisplay(path)
         dlg.Destroy()
         			
 
-    def updateDisplay(self, folder_path):
+    def UpdateDisplay(self, folder_path):
         # Update the listctrl with the file names in the passed folder
         self.list_ctrl.DeleteAllItems()
         tag = ''
@@ -3320,41 +3338,47 @@ class TabTwo(wx.Panel):
             tag = "/"			
             paths = glob.glob(folder_path + "/*.*")
             
+        myindex = 0    
         for index, path in enumerate(paths):
             self.dir_path = os.path.dirname(path) + tag
             root, ext = os.path.splitext(os.path.basename(path))
-             
-            if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
-                self.list_ctrl.InsertStringItem(index, os.path.basename(path))
             
-            # Nice background colour    
-                if index % 2:
-                    self.list_ctrl.SetItemBackgroundColour(index, "white")
+            if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+                self.list_ctrl.InsertStringItem(myindex, os.path.basename(path))
+            
+                # Nice background colour
+                if myindex % 2:
+                    self.list_ctrl.SetItemBackgroundColour(myindex, "white")
                 else:
-                    self.list_ctrl.SetItemBackgroundColour(index, '#eee8aa')    
+                    self.list_ctrl.SetItemBackgroundColour(myindex, '#eee8aa')
+                myindex = myindex +1
+                
+        pub.sendMessage('statusbar1.update', status = '%d Songs Found' % myindex)       
 			
 
     def AddToPlayList(self, event):
 		# Add a song to panel 2 the play list panel
         count = self.list_ctrl.GetItemCount()
-        
+         
+        copied = 0         
         for row in range(count):
             item = self.list_ctrl.GetItem(itemId=row)
-            filename = item.GetText()
-            location = self.dir_path + filename
+            if self.list_ctrl.IsSelected(row):
+                copied = copied + 1
+                filename = item.GetText()
+                location = self.dir_path + filename
             
-		    # Create a SongStruct because that's what karaoke mgr wants
-            settings = self.KaraokeMgr.SongDB.Settings
-            song = pykdb.SongStruct(location, settings, filename)
-            self.KaraokeMgr.AddToPlaylist(song, self)
+		        # Create a SongStruct because that's what karaoke mgr wants
+                settings = self.KaraokeMgr.SongDB.Settings
+                song = pykdb.SongStruct(location, settings, filename)
+                self.KaraokeMgr.AddToPlaylist(song, self, 0)
             		
-		
+		if copied > 0:
+			pub.sendMessage('statusbar1.update', status = '%d Songs Copied' % copied)
 
-
-#        if not songs:
-#            wx.MessageBox("No songs selected.")
-#            return
-
+        if copied == 0:
+            wx.MessageBox("No songs selected.")
+            return
 
             
     def OnStartPlaylistClicked(self, event):
@@ -3380,11 +3404,308 @@ class TabThree(wx.Panel):
         
         self.KaraokeMgr = KaraokeMgr
 
+
+class HelpFrame(wx.Frame): 
+    def __init__(self, parent, title): 
+      wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
+      
+      html = wx.html.HtmlWindow(self) 
+		
+      if "gtk2" in wx.PlatformInfo: 
+         html.SetStandardFonts() 
+         
+      html.LoadPage("pykaraoke.html")
+      self.Centre()
+      self.Show()
+
+
+class EffectsConfig(wx.Frame): 
+    def __init__(self, parent, KaraokeMgr): 
+
+        wx.Frame.__init__(self, parent, wx.ID_ANY, "Sound Effects Config", style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
+
+        self.KaraokeMgr = KaraokeMgr
+        
+        self.wildcard = "Karaoke (*.cdg)|*.cdg|"\
+            "Video (*.mpg)|*.mpg|"\
+            "Karaoke (*.kar)|*.kar"
+        
+        # Add a panel so it looks correct on all platforms
+        self.panel = wx.Panel(self, wx.ID_ANY)
+    
+        vsizer = wx.BoxSizer(wx.VERTICAL)
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        title = wx.StaticText(self.panel, wx.ID_ANY, 'Select the files for the 10 instant play buttons.')
+        hsizer.Add(title, 0, wx.ALL | wx.CENTER, 5)
+        vsizer.Add(hsizer, 0, wx.CENTER)
+        vsizer.Add(wx.StaticLine(self.panel,), 0, wx.ALL|wx.EXPAND, 5)
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('1.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx1 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX1, size=(350, 25))
+        btn1 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx1, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn1, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)
+        self.Bind(wx.EVT_BUTTON, self.Onbtn1, btn1)
+        self.tc1 = fx1
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('2.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx2 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX2, size=(350, 25))
+        btn2 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx2, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn2, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)
+        self.Bind(wx.EVT_BUTTON, self.Onbtn2, btn2)
+        self.tc2 = fx2
+                
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('3.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx3 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX3, size=(350, 25))
+        btn3 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx3, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn3, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)
+        self.Bind(wx.EVT_BUTTON, self.Onbtn3, btn3)
+        self.tc3 = fx3
+                
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('4.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx4 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX4, size=(350, 25))
+        btn4 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx4, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn4, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)        
+        self.Bind(wx.EVT_BUTTON, self.Onbtn4, btn4)
+        self.tc4 = fx4
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('5.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx5 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX5, size=(350, 25))
+        btn5 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx5, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn5, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)
+        self.Bind(wx.EVT_BUTTON, self.Onbtn5, btn5)
+        self.tc5 = fx5
+                
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('6.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx6 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX6, size=(350, 25))
+        btn6 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx6, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn6, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)
+        self.Bind(wx.EVT_BUTTON, self.Onbtn6, btn6)
+        self.tc6 = fx6
+                
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('7.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx7 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX7, size=(350, 25))
+        btn7 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx7, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn7, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)
+        self.Bind(wx.EVT_BUTTON, self.Onbtn7, btn7)
+        self.tc7 = fx7
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('8.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx8 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX8, size=(350, 25))
+        btn8 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx8, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn8, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)     
+        self.Bind(wx.EVT_BUTTON, self.Onbtn8, btn8)
+        self.tc8 = fx8
+                
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('9.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx9 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX9, size=(350, 25))
+        btn9 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx9, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn9, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)
+        self.Bind(wx.EVT_BUTTON, self.Onbtn9, btn9)
+        self.tc9 = fx9
+                
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        bmp = wx.Bitmap('0.png')
+        icon = wx.StaticBitmap(self.panel, wx.ID_ANY, bmp)
+        fx0 = wx.TextCtrl(self.panel, wx.ID_ANY, self.KaraokeMgr.SongDB.Settings.FX0, size=(350, 25))
+        btn0 = wx.Button(self.panel, wx.ID_ANY, 'Brows')
+        hsizer.Add(icon, 0, wx.ALL, 5)
+        hsizer.Add(fx0, 1, wx.ALL|wx.EXPAND, 5)
+        hsizer.Add(btn0, 0, wx.ALL, 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.EXPAND, 5)           
+        self.Bind(wx.EVT_BUTTON, self.Onbtn0, btn0)
+        self.tc0 = fx0
+        
+        self.panel.SetSizer(vsizer)
+        vsizer.Fit(self)
+        
+        self.Centre()
+        self.Show()
+        
+
+    def Onbtn1(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc1.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX1 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn2(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc2.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX2 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn3(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc3.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX3 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn4(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc4.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX4 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn5(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc5.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX5 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn6(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc6.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX6 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn7(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc7.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX7 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn8(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc8.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX8 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn9(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc9.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX9 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+    def Onbtn0(self, event):
+		
+        dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", self.wildcard, wx.OPEN)
+		
+        if dlg.ShowModal() == wx.ID_OK: 
+            self.tc0.WriteText(dlg.GetPath())
+            self.KaraokeMgr.SongDB.Settings.FX0 = dlg.GetPath()
+            self.KaraokeMgr.SongDB.SaveSettings()            
+             
+        dlg.Destroy() 
+
+
+class BackgroundSound(wx.Frame): 
+    def __init__(self, parent, title): 
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
+      
+#      html = wx.html.HtmlWindow(self) 
+		
+#      if "gtk2" in wx.PlatformInfo: 
+#         html.SetStandardFonts() 
+         
+#      html.LoadPage("pykaraoke.html")
+        self.Centre()
+        self.Show()            
+
                 
 # Main window
 class PyKaraokeWindow (wx.Frame):
     def __init__(self,parent,id,title,KaraokeMgr):
-        wx.Frame.__init__(self,parent,wx.ID_ANY, title, size = (800, 450), #manager.settings.WindowSize,
+        wx.Frame.__init__(self,parent,wx.ID_ANY, title, size = (800, 500), #manager.settings.WindowSize,
                             style=wx.DEFAULT_FRAME_STYLE|wx.NO_FULL_REPAINT_ON_RESIZE)
 
         self.KaraokeMgr = KaraokeMgr
@@ -3427,7 +3748,6 @@ class PyKaraokeWindow (wx.Frame):
         sizer.Add(nb, 1, wx.EXPAND)
         p.SetSizer(sizer)
 
-
         # Message subscriptions
         pub.subscribe(self.OnStatusOneUpdate, 'statusbar1.update')
         pub.subscribe(self.OnStatusTwoUpdate, 'statusbar2.update')
@@ -3441,191 +3761,211 @@ class PyKaraokeWindow (wx.Frame):
         
         # Attach on exit handler to clean up temporary files
         wx.EVT_CLOSE(self, self.OnClose)
-
-        self.Show(True)
         
+        self.Centre()
+        self.Show(True)
 
+    
     def OnStatusOneUpdate(self, status):
-		self.SetStatusText(status, 0)
+        self.SetStatusText(status, 0)
+
         
     def OnStatusTwoUpdate(self, status):
-		self.SetStatusText(status, 1)
+        self.SetStatusText(status, 1)
+        if status == 'Currently Not Playing A Song':
+            self.Timer = wx.Timer(self)
+            self.Bind(wx.EVT_TIMER, self.Update, self.Timer)
+            self.Timer.Start(3000)
+        else:
+            if self.Timer.IsRunning():
+                self.Timer.Stop()           
+        
+    def Update(self, event):
+        self.Timer.Stop()
+        pub.sendMessage('playsomething.update', status = 'Play something')
+        
+        
+#    def __setupMenu(self):
+#        accelTable = []
+#
+#        menuBar = wx.MenuBar()
+#
+#        fileMenu = wx.Menu()
+#
+#        item = fileMenu.Append(-1, '&Configure')
+#        self.Bind(wx.EVT_MENU, self.OnConfigClicked, item)
+#        item = fileMenu.Append(-1, 'Add New Songs to &Database')
+#        self.Bind(wx.EVT_MENU, self.OnDBClicked, item)
+#        item = fileMenu.Append(-1, '&Export Song List')
+#        self.Bind(wx.EVT_MENU, self.OnExport, item)
+#        item = fileMenu.Append(-1, 'Print Song List')
+#        self.Bind(wx.EVT_MENU, self.OnPrintSongList, item)
+#
+#        fileMenu.AppendSeparator()
+#        item = fileMenu.Append(-1, '&Save database\tCtrl+S')
+#        accelTable.append((wx.ACCEL_CTRL, ord('S'), item.GetId()))
+#        self.Bind(wx.EVT_MENU, self.OnSave, item)
+#        item = fileMenu.Append(-1, 'E&xit')
+#        self.Bind(wx.EVT_MENU, self.OnClose, item)
+#
+#        menuBar.Append(fileMenu, '&File')
+#
+#        helpMenu = wx.Menu()
+#        item = helpMenu.Append(wx.ID_ABOUT, '&About')
+#        self.Bind(wx.EVT_MENU, self.OnAbout, item)
+#
+#        menuBar.Append(helpMenu, '&Help')
+#
+#        self.SetMenuBar(menuBar)
+#        self.SetAcceleratorTable(wx.AcceleratorTable(accelTable))
 
-    def __setupMenu(self):
-        accelTable = []
-
-        menuBar = wx.MenuBar()
-
-        fileMenu = wx.Menu()
-
-        item = fileMenu.Append(-1, '&Configure')
-        self.Bind(wx.EVT_MENU, self.OnConfigClicked, item)
-        item = fileMenu.Append(-1, 'Add New Songs to &Database')
-        self.Bind(wx.EVT_MENU, self.OnDBClicked, item)
-        item = fileMenu.Append(-1, '&Export Song List')
-        self.Bind(wx.EVT_MENU, self.OnExport, item)
-        item = fileMenu.Append(-1, 'Print Song List')
-        self.Bind(wx.EVT_MENU, self.OnPrintSongList, item)
-
-        fileMenu.AppendSeparator()
-        item = fileMenu.Append(-1, '&Save database\tCtrl+S')
-        accelTable.append((wx.ACCEL_CTRL, ord('S'), item.GetId()))
-        self.Bind(wx.EVT_MENU, self.OnSave, item)
-        item = fileMenu.Append(-1, 'E&xit')
-        self.Bind(wx.EVT_MENU, self.OnClose, item)
-
-        menuBar.Append(fileMenu, '&File')
-
-        helpMenu = wx.Menu()
-        item = helpMenu.Append(wx.ID_ABOUT, '&About')
-        self.Bind(wx.EVT_MENU, self.OnAbout, item)
-
-        menuBar.Append(helpMenu, '&Help')
-
-        self.SetMenuBar(menuBar)
-        self.SetAcceleratorTable(wx.AcceleratorTable(accelTable))
         
     def setupToolBar(self):
 	
-	
         self.toolbar = self.CreateToolBar()
         
-        self.play1 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('1.png'), shortHelp="Play 1", longHelp="Play sound effect 1")
-        self.play2 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('2.png'), shortHelp="Play 2", longHelp="Play sound effect 2")
-        self.play3 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('3.png'), shortHelp="Play 3", longHelp="Play sound effect 3")
-        self.play4 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('4.png'), shortHelp="Play 4", longHelp="Play sound effect 4")
-        self.play5 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('5.png'), shortHelp="Play 5", longHelp="Play sound effect 5")
-        self.play6 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('6.png'), shortHelp="Play 6", longHelp="Play sound effect 6")       
-        self.play7 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('7.png'), shortHelp="Play 7", longHelp="Play sound effect 7")
-        self.play8 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('8.png'), shortHelp="Play 8", longHelp="Play sound effect 8")
-        self.play9 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('9.png'), shortHelp="Play 9", longHelp="Play sound effect 9")
-        self.play0 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('0.png'), shortHelp="Play 0", longHelp="Play sound effect 0")
+        self.play1 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('1.png'), shortHelp="Play 1", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX1))
+        self.play2 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('2.png'), shortHelp="Play 2", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX2))
+        self.play3 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('3.png'), shortHelp="Play 3", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX3))
+        self.play4 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('4.png'), shortHelp="Play 4", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX4))
+        self.play5 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('5.png'), shortHelp="Play 5", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX5))
+        self.play6 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('6.png'), shortHelp="Play 6", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX6))       
+        self.play7 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('7.png'), shortHelp="Play 7", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX7))
+        self.play8 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('8.png'), shortHelp="Play 8", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX8))
+        self.play9 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('9.png'), shortHelp="Play 9", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX9))
+        self.play0 = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('0.png'), shortHelp="Play 0", longHelp=os.path.basename(self.KaraokeMgr.SongDB.Settings.FX0))
         
         self.toolbar.AddStretchableSpace()
         
-        self.conf_menu = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('A.png'), shortHelp="About", longHelp="Open about dialog")
-        self.dbase_menu = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('B.png'), shortHelp="Background Music", longHelp="Background music options")
-        self.conf_menu = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('C.png'), shortHelp="Config", longHelp="Open config menu")
-        self.dbase_menu = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('D.png'), shortHelp="Song Data", longHelp="Add or remove songs in database")
-        self.dbase_menu = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('E.png'), shortHelp="Effects", longHelp="Sound effects options")
-        self.help_menu = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('Help.png'), shortHelp="Help", longHelp="Open help menu")
+        self.A = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('A.png'), shortHelp="About", longHelp="Open about dialog")
+        self.B = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('B.png'), shortHelp="Background Music", longHelp="Background music options")
+        self.C = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('C.png'), shortHelp="Config", longHelp="Open config menu")
+        self.D = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('D.png'), shortHelp="Song Data", longHelp="Add or remove songs in database")
+        self.E = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('E.png'), shortHelp="Effects", longHelp="Sound effects options")
+        self.H = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('Help.png'), shortHelp="Help", longHelp="Open help menu")
         
         self.toolbar.Realize()
 
-#        self.Bind(wx.EVT_TOOL, self.OnPlay1, self.play1)
-#        self.Bind(wx.EVT_TOOL, self.OnUndo, tundo)
-#        self.Bind(wx.EVT_TOOL, self.OnRedo, tredo)
+        self.Bind(wx.EVT_TOOL, self.OnPlay1, self.play1)
+        self.Bind(wx.EVT_TOOL, self.OnPlay2, self.play2)
+        self.Bind(wx.EVT_TOOL, self.OnPlay3, self.play3)
+        self.Bind(wx.EVT_TOOL, self.OnPlay4, self.play4)
+        self.Bind(wx.EVT_TOOL, self.OnPlay5, self.play5)
+        self.Bind(wx.EVT_TOOL, self.OnPlay6, self.play6)
+        self.Bind(wx.EVT_TOOL, self.OnPlay7, self.play7)
+        self.Bind(wx.EVT_TOOL, self.OnPlay8, self.play8)
+        self.Bind(wx.EVT_TOOL, self.OnPlay9, self.play9)
+        self.Bind(wx.EVT_TOOL, self.OnPlay0, self.play0)
+        self.Bind(wx.EVT_TOOL, self.OnAbout, self.A)
+        self.Bind(wx.EVT_TOOL, self.OnBackGround, self.B)
+        self.Bind(wx.EVT_TOOL, self.OnConfig, self.C)
+        self.Bind(wx.EVT_TOOL, self.OnDataBase, self.D)
+        self.Bind(wx.EVT_TOOL, self.OnEffects, self.E)
+        self.Bind(wx.EVT_TOOL, self.OnHelp, self.H)
 
-	    
 
-    # Handle drop-down box (Folder View/Search View)
-    def OnViewChosen(self, event):
-        # Change between Folder View and Search View
-        if self.ViewChoice.GetSelection() == 1:
-            self.LeftSizer.Show(self.SearchPanel, False)
-            self.LeftSizer.Show(self.TreePanel, True)
-            self.LeftSizer.Layout()
-        else:
-            self.LeftSizer.Show(self.TreePanel, False)
-            self.LeftSizer.Show(self.SearchPanel, True)
-            self.LeftSizer.Layout()
-            self.SearchPanel.SearchText.SetFocus()
+    def OnPlay1(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX1
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+		
 
-    def OnVolumeUpClicked(self, event):
-        """ Moves the volume up. """
-        manager.VolumeUp()
-        self.VolumeControl.SetValue(manager.GetVolume() * 100)
+    def OnPlay2(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX2
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+			
 
-    def OnVolumeDownClicked(self, event):
-        """ Moves the volume down. """
-        manager.VolumeDown()
-        self.VolumeControl.SetValue(manager.GetVolume() * 100)
+    def OnPlay3(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX3
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+			
 
-    def OnVolumeChanged(self, event):
-        """ Resets the value to what the spin box has set."""
-        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
+    def OnPlay4(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX4
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+			
 
-    def UpdateVolume(self):
-        """ Synchronises the volume spinner and the PyGame music instance """
-        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
+    def OnPlay5(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX5
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+			
 
-    def OnKamikazeClicked(self, event):
-        """ Handles the Kamikaze button click event. """
-        if self.KaraokeMgr.SongDB.GetDatabaseSize() == 0:
-            setupString = "You do not have any songs in your database. Would you like to add folders now?"
-            answer = wx.MessageBox(setupString, "Setup database now?", wx.YES_NO | wx.ICON_QUESTION)
-            if answer == wx.YES:
-                # Open up the database setup dialog
-                self.Frame = DatabaseSetupWindow(self, -1, "Database Setup", self.KaraokeMgr)
-        else:
-            songIndex = random.randrange(0, self.KaraokeMgr.SongDB.GetDatabaseSize())
-            song = self.KaraokeMgr.SongDB.GetSong(songIndex)
-            # Add the performer information or the file name
-            if self.KaraokeMgr.SongDB.Settings.UsePerformerName:
-                dlg = PerformerPrompt.PerformerPrompt(self)
-                if dlg.ShowModal() == wx.ID_OK:
-                    song.DisplayFilename = dlg.getPerformer()
-                else:
-                    return
-            self.KaraokeMgr.AddToPlaylist(song, self)
+    def OnPlay6(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX6
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+			
 
-    def OnPlayClicked(self, event):
-        """ "Play Song" button clicked. """
+    def OnPlay7(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX7
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+			
 
-        if self.ViewChoice.GetSelection() == 1:
-            songs = self.TreePanel.getSelectedSongs()
-        else:
-            songs = self.SearchPanel.getSelectedSongs()
+    def OnPlay8(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX8
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+			
 
-        if not songs:
-            wx.MessageBox("No songs selected.")
-            return
+    def OnPlay9(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX9
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+						
 
-        self.UpdateVolume()
-        self.KaraokeMgr.PlayWithoutPlaylist(songs[0])
-
-    def OnPlaylistClicked(self, event):
-        """ "Add to Playlist" button clicked. """
-
-        if self.ViewChoice.GetSelection() == 1:
-            songs = self.TreePanel.getSelectedSongs()
-        else:
-            songs = self.SearchPanel.getSelectedSongs()
-
-        if not songs:
-            wx.MessageBox("No songs selected.")
-            return
-
-        for song in songs:
-            self.UpdateVolume()
-            self.KaraokeMgr.AddToPlaylist(song, self)
-
-    def OnStartPlaylistClicked(self, event):
-        """ "Start" button clicked. """
-        if (self.playlistButton.GetLabel() == "Play") or (self.playlistButton.GetLabel() == "Start"):
-            self.UpdateVolume()
-            self.PlaylistPanel.play()
-        elif self.playlistButton.GetLabel() == "Stop":
-            self.KaraokeMgr.Player.Close()
-            self.playlistButton.SetLabel("Play")
-
-    def OnClearPlaylistClicked(self, event):
-        """ "Clear playlist" button clicked. """
-        self.PlaylistPanel.clear()
-
-    def OnDBClicked(self, event):
-        # Open up the database setup dialog
-        self.Frame = DatabaseSetupWindow(self, -1, "Database Setup", self.KaraokeMgr)
-
-    def OnConfigClicked(self, event):
-        # Open up the settings setup dialog
-        self.Frame = ConfigWindow(self, -1, "Configuration", self.KaraokeMgr)
-
-    def OnExport(self, event):
-        self.Frame = ExportWindow(self)
-
+    def OnPlay0(self, event):
+        path = self.KaraokeMgr.SongDB.Settings.FX0
+        root, ext = os.path.splitext(os.path.basename(path))
+             
+        if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
+            settings = self.KaraokeMgr.SongDB.Settings
+            song = pykdb.SongStruct(path, settings, os.path.basename(path))
+            self.KaraokeMgr.PlayWithoutPlaylist(song)
+	            
+            						
     def OnAbout(self, event):
-        # Show the appropriate About window (we must use a special About window
+		# Show the appropriate About window (we must use a special About window
         # if using Wx2.6 on which AboutDialogInfo() controls are not available).
         if HasWx26Only() == True:
             self.Frame = Wx26AboutWindow(self)
@@ -3651,12 +3991,185 @@ class PyKaraokeWindow (wx.Frame):
             abtnfAbout.SetWebSite("http://www.kibosh.org/pykaraoke/")
             wx.AboutBox(abtnfAbout)
 
-    def OnPrintSongList(self, evt):
-        PrintSongListWindow(self)
+		
+    def OnBackGround(self, event):
+        self.Frame = BackgroundSound(self, "Background Music Settings")		
+#        wx.MessageBox("Config for background here.")
+#        return
+		
 
-    def OnSave(self, event):
-        self.KaraokeMgr.SongDB.SaveDatabase()
-        self.KaraokeMgr.SongDB.SaveSettings()
+    def OnConfig(self, event):
+        # Open up the settings setup dialog
+        self.Frame = ConfigWindow(self, -1, "Configuration", self.KaraokeMgr)
+
+							    
+    def OnDataBase(self, event):
+        # Open up the database setup dialog
+        self.Frame = DatabaseSetupWindow(self, -1, "Database Setup", self.KaraokeMgr)
+		
+
+    def OnEffects(self, event):
+        self.Frame = EffectsConfig(self, self.KaraokeMgr)		
+		
+#        self.KaraokeMgr.SongDB.Settings.FX1 = "Ken Williams"
+#        self.KaraokeMgr.SongDB.SaveSettings()
+
+#        self.KaraokeMgr.SongDB.LoadSettings(errorCallback)
+#        print self.KaraokeMgr.SongDB.Settings.FX1
+
+#        wx.MessageBox("Config for effects buttons here.")
+#        return
+		
+
+    def OnHelp(self, event):
+		self.Frame = HelpFrame(self, "PyKaraoke Help")
+		
+#        wx.MessageBox("Help screens here.")
+#        return
+#        html = wx.html.HtmlWindow(self)
+#        if "gtk2" in wx.PlatformInfo:
+#            html.SetStandardFonts()
+#        wx.CallAfter(html.LoadPage, "http://www.google.com")	
+				
+#    # Handle drop-down box (Folder View/Search View)
+#    def OnViewChosen(self, event):
+#        # Change between Folder View and Search View
+#        if self.ViewChoice.GetSelection() == 1:
+#            self.LeftSizer.Show(self.SearchPanel, False)
+#            self.LeftSizer.Show(self.TreePanel, True)
+#            self.LeftSizer.Layout()
+#        else:
+#            self.LeftSizer.Show(self.TreePanel, False)
+#            self.LeftSizer.Show(self.SearchPanel, True)
+#            self.LeftSizer.Layout()
+#            self.SearchPanel.SearchText.SetFocus()
+#
+#    def OnVolumeUpClicked(self, event):
+#        """ Moves the volume up. """
+#        manager.VolumeUp()
+#        self.VolumeControl.SetValue(manager.GetVolume() * 100)
+#
+#    def OnVolumeDownClicked(self, event):
+#        """ Moves the volume down. """
+#        manager.VolumeDown()
+#        self.VolumeControl.SetValue(manager.GetVolume() * 100)
+#
+#    def OnVolumeChanged(self, event):
+#        """ Resets the value to what the spin box has set."""
+#        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
+#
+#    def UpdateVolume(self):
+#        """ Synchronises the volume spinner and the PyGame music instance """
+#        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
+#
+#    def OnKamikazeClicked(self, event):
+#        """ Handles the Kamikaze button click event. """
+#        if self.KaraokeMgr.SongDB.GetDatabaseSize() == 0:
+#            setupString = "You do not have any songs in your database. Would you like to add folders now?"
+#            answer = wx.MessageBox(setupString, "Setup database now?", wx.YES_NO | wx.ICON_QUESTION)
+#            if answer == wx.YES:
+#                # Open up the database setup dialog
+#                self.Frame = DatabaseSetupWindow(self, -1, "Database Setup", self.KaraokeMgr)
+#        else:
+#            songIndex = random.randrange(0, self.KaraokeMgr.SongDB.GetDatabaseSize())
+#            song = self.KaraokeMgr.SongDB.GetSong(songIndex)
+#            # Add the performer information or the file name
+#            if self.KaraokeMgr.SongDB.Settings.UsePerformerName:
+#                dlg = PerformerPrompt.PerformerPrompt(self)
+#                if dlg.ShowModal() == wx.ID_OK:
+#                    song.DisplayFilename = dlg.getPerformer()
+#                else:
+#                    return
+#            self.KaraokeMgr.AddToPlaylist(song, self)
+#
+#    def OnPlayClicked(self, event):
+#        """ "Play Song" button clicked. """
+#
+#        if self.ViewChoice.GetSelection() == 1:
+#            songs = self.TreePanel.getSelectedSongs()
+#        else:
+#            songs = self.SearchPanel.getSelectedSongs()
+#
+#        if not songs:
+#            wx.MessageBox("No songs selected.")
+#            return
+#
+#        self.UpdateVolume()
+#        self.KaraokeMgr.PlayWithoutPlaylist(songs[0])
+#
+#    def OnPlaylistClicked(self, event):
+#        """ "Add to Playlist" button clicked. """
+#
+#        if self.ViewChoice.GetSelection() == 1:
+#            songs = self.TreePanel.getSelectedSongs()
+#        else:
+#            songs = self.SearchPanel.getSelectedSongs()
+#
+#        if not songs:
+#            wx.MessageBox("No songs selected.")
+#            return
+#
+#        for song in songs:
+#            self.UpdateVolume()
+#            self.KaraokeMgr.AddToPlaylist(song, self)
+#
+#    def OnStartPlaylistClicked(self, event):
+#        """ "Start" button clicked. """
+#        if (self.playlistButton.GetLabel() == "Play") or (self.playlistButton.GetLabel() == "Start"):
+#            self.UpdateVolume()
+#            self.PlaylistPanel.play()
+#        elif self.playlistButton.GetLabel() == "Stop":
+#            self.KaraokeMgr.Player.Close()
+#            self.playlistButton.SetLabel("Play")
+#
+#    def OnClearPlaylistClicked(self, event):
+#        """ "Clear playlist" button clicked. """
+#        self.PlaylistPanel.clear()
+#
+#    def OnDBClicked(self, event):
+#        # Open up the database setup dialog
+#        self.Frame = DatabaseSetupWindow(self, -1, "Database Setup", self.KaraokeMgr)
+#
+#    def OnConfigClicked(self, event):
+#        # Open up the settings setup dialog
+#        self.Frame = ConfigWindow(self, -1, "Configuration", self.KaraokeMgr)
+#
+#    def OnExport(self, event):
+#        self.Frame = ExportWindow(self)
+#
+#    def OnAbout(self, event):
+#        # Show the appropriate About window (we must use a special About window
+#        # if using Wx2.6 on which AboutDialogInfo() controls are not available).
+#        if HasWx26Only() == True:
+#            self.Frame = Wx26AboutWindow(self)
+#        else:
+#            abtnfAbout = wx.AboutDialogInfo()
+#            abtnfAbout.AddArtist("Kelvin Lawson <kelvinl@users.sf.net>")
+#            abtnfAbout.AddArtist("Tavmjung Bah")
+#            abtnfAbout.SetCopyright("(C) 2005-2009 Kelvin Lawson\n(C) 2009 John Schneiderman\n(C) 2006 David Rose\n(C) 2005 William Ferrell")
+#            abtnfAbout.SetDescription("A karaoke player to play your collection of karaoke songs.")
+#            abtnfAbout.AddDeveloper("Will Ferrell <willfe@gmail.com>")
+#            abtnfAbout.AddDeveloper("Andrei Gavrila")
+#            abtnfAbout.AddDeveloper("Kelvin Lawson <kelvinl@users.sf.net>")
+#            abtnfAbout.AddDeveloper("Craig Rindy")
+#            abtnfAbout.AddDeveloper("David Rose <pykar@ddrose.com>")
+#            abtnfAbout.AddDeveloper("John Schneiderman <JohnMS@member.fsf.org>")
+#            #abtnfAbout.AddDocWriter("N/A")
+#            abtnfAbout.SetIcon(wx.Icon(self.BigIconPath, wx.BITMAP_TYPE_PNG, 64, 64))
+#            LGPLv2_Notice = "PyKaraoke is free software; you can redistribute it and/or modify it under\n the terms of the GNU Lesser General Public License as published by the\n Free Software Foundation; either version 2.1 of the License, or (at your\n option) any later version.\n \n PyKaraoke is distributed in the hope that it will be useful, but WITHOUT\n ANY WARRANTY; without even the implied warranty of MERCHANTABILITY\n or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General\n Public License for more details.\n \n You should have received a copy of the GNU Lesser General Public\n License along with this library; if not, write to the\n Free Software Foundation, Inc.\n 59 Temple Place, Suite 330\n Boston, MA  02111-1307  USA"
+#            abtnfAbout.SetLicence(LGPLv2_Notice)
+#            abtnfAbout.SetName("PyKaraoke")
+#            #abtnfAbout.AddTranslator("N/A")
+#            abtnfAbout.SetVersion(pykversion.PYKARAOKE_VERSION_STRING)
+#            abtnfAbout.SetWebSite("http://www.kibosh.org/pykaraoke/")
+#            wx.AboutBox(abtnfAbout)
+#
+#    def OnPrintSongList(self, evt):
+#        PrintSongListWindow(self)
+#
+#    def OnSave(self, event):
+#        self.KaraokeMgr.SongDB.SaveDatabase()
+#        self.KaraokeMgr.SongDB.SaveSettings()
 
     def OnClose(self, event):
         """ Handle closing pykaraoke (need to delete any temporary files on close) """
@@ -3664,7 +4177,7 @@ class PyKaraokeWindow (wx.Frame):
         # Save the current window size
         self.KaraokeMgr.SongDB.Settings.WindowSize = (self.GetSize().GetWidth(), self.GetSize().GetHeight())
         self.KaraokeMgr.SongDB.SaveSettings()
-
+        
         # Hide the window
         self.Show(False)
 
@@ -3772,13 +4285,14 @@ class PyKaraokeManager:
     # Handles adding to the playlist panel, playing if necessary etc.
     # Takes a SongStruct so it has both title and full path details.
     # Stores the SongStruct in the Playlist control and sets the title.
-    def AddToPlaylist(self, song_struct, client_win):
+    def AddToPlaylist(self, song_struct, client_win, flag):
         # Add the performer information if enabled
         performer = ""
-        if self.SongDB.Settings.UsePerformerName:
-            dlg = PerformerPrompt.PerformerPrompt(client_win)
-            if dlg.ShowModal() == wx.ID_OK:
-                performer = dlg.getPerformer()
+        if flag == 1:
+            if self.SongDB.Settings.UsePerformerName:
+                dlg = PerformerPrompt.PerformerPrompt(client_win)
+                if dlg.ShowModal() == wx.ID_OK:
+                    performer = dlg.getPerformer()
         client_win.PlaylistPanel.AddItem(song_struct, performer)
         
 
@@ -3807,12 +4321,15 @@ class PyKaraokeManager:
             self.PlayingIndex = song_index
             # Show the song as selected in the playlist
             client_win.SetItemSelected(self.PlayingIndex)
+            client_win.Playlist.DeleteItem(self.PlayingIndex)
+            client_win.PlaylistSongStructList.pop(self.PlayingIndex)
         else:
             # Note that this will be -1 if the first item is playing,
             # but this is a valid index for GetNextItem() - it will
             # get the first song in the list.
             self.PlayingIndex = song_index - 1
             self.Player.Close()
+
 
     def SongFinishedCallback(self):
         if not self.gui:
@@ -3824,6 +4341,7 @@ class PyKaraokeManager:
         pub.sendMessage('statusbar2.update', status = 'Currently Not Playing A Song')
         pub.sendMessage('gauge.update', status = 0)
         
+                    
 #        # Only continue to play if auto play is enabled.
 #        if self.SongDB.Settings.AutoPlayList:
 #            next_index = self.PlayingIndex + 1
@@ -3884,8 +4402,6 @@ class PyKaraokeManager:
         
         timeLength = self.Player.GetLength()
         if timeLength > 0:
-#            print "timeLength ", timeLength
-#            pub.sendMessage('gauge.start', status = timeLength)
             pub.sendMessage('gauge.start', status = timeLength + 1)
         else:
 			pub.sendMessage('gauge.start', status = 100)    
@@ -3893,9 +4409,9 @@ class PyKaraokeManager:
         if not self.SongDB.Settings.AutoPlayList:
             self.Frame.playlistButton.SetLabel("Stop")
 
-    def handleIdle(self, event):
+    def OnIdle(self, event):
         manager.Poll()
-
+        
         if self.Player:
             wx.WakeUpIdle()
             if self.gui:
@@ -3910,9 +4426,6 @@ class PyKaraokeManager:
 					# Failed to get actual playing time
                     pub.sendMessage('statusbar2.update', status = '[%02d:%02d] %s - %s' % (minutes, seconds, self.Player.Song.Artist, self.Player.Song.Title))
                 else:
-#                    print "timeLength ", timeLength
-#                    print "timeLeft ", timeLeft
-					
 					# Got playing time, display it
                     pub.sendMessage('gauge.update', status = timeLeft)					
 #                    pub.sendMessage('gauge.update', status = timeLength - timeLeft)
@@ -3973,7 +4486,7 @@ class PyKaraokeApp(wx.App):
         
         Mgr = PyKaraokeManager()
         if Mgr.gui:
-            self.Bind(wx.EVT_IDLE, Mgr.handleIdle)
+            self.Bind(wx.EVT_IDLE, Mgr.OnIdle)
         return True
 
 def main():

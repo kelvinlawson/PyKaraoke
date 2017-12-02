@@ -55,7 +55,6 @@ class PerformerPrompt(wx.Dialog):
         self.PerformerTxtCtrl.SetFocus()
         
     def onENTER(self, event):
-		print "Enter Captured"
 		""" Sets the performer entered and closes the dialogue. """
 		self.performer = self.PerformerTxtCtrl.GetValue()
 		self.EndModal(wx.ID_OK)
@@ -63,7 +62,7 @@ class PerformerPrompt(wx.Dialog):
 
     def onCANCEL(self, event):
         """ Sets the performer entered and closes the dialogue. """
-        self.performer = "Unknown"
+        self.performer = ""
         self.EndModal(wx.ID_OK)
         return False
 
