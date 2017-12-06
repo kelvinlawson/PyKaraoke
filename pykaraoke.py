@@ -187,7 +187,6 @@ class wxBusyCancelDialog(wx.ProgressDialog, pykdb.BusyCancelDialog):
 # new folder scan to fill the database etc.
 class DatabaseSetupWindow (wx.Frame):
     def __init__(self,parent,id,title,KaraokeMgr):
-#        wx.Frame.__init__(self,parent,wx.ID_ANY, title, style=wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
         self.KaraokeMgr = KaraokeMgr
 
@@ -320,13 +319,6 @@ class DatabaseSetupWindow (wx.Frame):
         psizer = wx.BoxSizer(wx.VERTICAL)
         psizer.Add(self.panel, flag = wx.EXPAND, proportion = 1)
         self.SetSizerAndFit(psizer)
-
-#        pos = parent.GetPosition()
-#        parentSize = parent.GetSize()
-#        thisSize = self.GetSize()
-#        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
-#        pos[1] += (parentSize[1] / 2) - (thisSize[1] / 2)
-#        self.SetPosition(pos)
 
         self.Centre()
         self.Show()
@@ -463,7 +455,6 @@ class DatabaseSetupWindow (wx.Frame):
 # Popup config window for setting full-screen mode etc
 class ConfigWindow (wx.Frame):
     def __init__(self,parent,id,title,KaraokeMgr):
-#        wx.Frame.__init__(self, parent, -1, title, style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
         self.parent = parent
         self.panel = wx.Panel(self)
@@ -499,13 +490,6 @@ class ConfigWindow (wx.Frame):
         psizer = wx.BoxSizer(wx.VERTICAL)
         psizer.Add(self.panel, flag = wx.EXPAND, proportion = 1)
         self.SetSizerAndFit(psizer)
-
-#        pos = parent.GetPosition()
-#        parentSize = parent.GetSize()
-#        thisSize = self.GetSize()
-#        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
-#        pos[1] += max((parentSize[1] / 2) - (thisSize[1] / 2), 0)
-#        self.SetPosition(pos)
 
         self.Centre()
         self.Show()
@@ -563,34 +547,15 @@ class ConfigWindow (wx.Frame):
             gsizer.Add(self.DefaultPosCheckBox, flag = wx.EXPAND)
         dispsizer.Add(gsizer, flag = wx.EXPAND | wx.ALL, border = 10)
 
-        self.SplitVerticallyCheckBox = wx.CheckBox(panel, -1, "Split play-list window vertically")
-        self.SplitVerticallyCheckBox.SetValue(settings.SplitVertically)
-        dispsizer.Add(self.SplitVerticallyCheckBox, flag = wx.LEFT | wx.RIGHT | wx.TOP, border = 10)
-
-        # Enables or disables the auto play-list functionality
-        self.AutoPlayCheckBox = wx.CheckBox(panel, -1, "Enable play-list continuous play")
-        self.AutoPlayCheckBox.SetValue(settings.AutoPlayList)
-        dispsizer.Add(self.AutoPlayCheckBox, flag = wx.LEFT | wx.RIGHT | wx.TOP, border = 10)
-
         # Enables or disables the double-click playing from the play-list
         self.DoubleClickPlayCheckBox = wx.CheckBox(panel, -1, "Enable playing from play-list")
         self.DoubleClickPlayCheckBox.SetValue(settings.DoubleClickPlayList)
         dispsizer.Add(self.DoubleClickPlayCheckBox, flag = wx.LEFT | wx.RIGHT | wx.TOP, border = 10)
 
-        # Enables or disables the clearing of the play-list from teh list
-        self.ClearFromPlayListCheckBox = wx.CheckBox(panel, -1, "Enable playlist clearing from play-list")
-        self.ClearFromPlayListCheckBox.SetValue(settings.ClearFromPlayList)
-        dispsizer.Add(self.ClearFromPlayListCheckBox, flag = wx.LEFT | wx.RIGHT | wx.TOP, border = 10)
-
         # Enables or disables playing from a search list functionality
         self.PlayFromSearchListCheckBox = wx.CheckBox(panel, -1, "Enable playing from search-list")
         self.PlayFromSearchListCheckBox.SetValue(settings.PlayFromSearchList)
         dispsizer.Add(self.PlayFromSearchListCheckBox, flag = wx.LEFT | wx.RIGHT | wx.TOP, border = 10)
-
-        # Enables or disables the kamikaze funtionality
-        self.KamikazeCheckBox = wx.CheckBox(panel, -1, "Enable kamikaze play")
-        self.KamikazeCheckBox.SetValue(settings.Kamikaze)
-        dispsizer.Add(self.KamikazeCheckBox, flag = wx.LEFT | wx.RIGHT | wx.TOP, border = 10)
 
         # Enables or disables the performer functionality
         self.PerformerCheckBox = wx.CheckBox(panel, -1, "Enable performer enquiry")
@@ -692,7 +657,6 @@ class ConfigWindow (wx.Frame):
             choices = map(str, settings.SampleRates))
         gsizer.Add(self.MIDISampleRate, flag = wx.EXPAND)
         karsizer.Add(gsizer, flag = wx.EXPAND | wx.LEFT | wx.RIGHT, border = 10)
-
 
         self.Colours = {}
         self.ColourSamples = {}
@@ -946,50 +910,11 @@ class ConfigWindow (wx.Frame):
         settings.HardwareSurface = self.HardwareSurfaceCheckBox.IsChecked()
         settings.PlayerPosition = None
 
-        splitVertically = self.SplitVerticallyCheckBox.IsChecked()
-        if splitVertically != settings.SplitVertically:
-            settings.SplitVertically = splitVertically
-            
-            # Re-split the main window.
-            parent = self.parent
-            parent.splitter.Unsplit()
-            if splitVertically:
-                parent.splitter.SplitVertically(parent.leftPanel, parent.rightPanel)
-            else:
-                parent.splitter.SplitHorizontally(parent.leftPanel, parent.rightPanel)
-            parent.splitter.SetSashGravity(0.5)    
-
-        # Save the auto play option
-        if self.AutoPlayCheckBox.IsChecked():
-            settings.AutoPlayList = True
-#            self.parent.playlistButton.SetLabel('Start')
-        else:
-            settings.AutoPlayList = False
-#            self.parent.playlistButton.SetLabel('Play')
-
         # Save the double-click play option
         if self.DoubleClickPlayCheckBox.IsChecked():
             settings.DoubleClickPlayList = True
         else:
             settings.DoubleClickPlayList = False
-
-        # Save the playlist clear option
-        if self.ClearFromPlayListCheckBox.IsChecked():
-            settings.ClearFromPlayList = True
-        else:
-            settings.ClearFromPlayList = False
-
-        # Save the kamikaze option
-        if self.KamikazeCheckBox.IsChecked():
-            settings.Kamikaze = True
-            self.parent.playButton.SetLabel('Kamikaze')
-            self.parent.Unbind(wx.EVT_BUTTON, self.parent.playButton)
-            self.parent.Bind(wx.EVT_BUTTON, self.parent.OnKamikazeClicked, self.parent.playButton)
-        else:
-            settings.Kamikaze = False
-#            self.parent.playButton.SetLabel('Play')
-#            self.parent.Unbind(wx.EVT_BUTTON, self.parent.playButton)
-#            self.parent.Bind(wx.EVT_BUTTON, self.parent.OnPlayClicked, self.parent.playButton)
 
         # Save the performer option
         if self.PerformerCheckBox.IsChecked() != settings.UsePerformerName:
@@ -1240,109 +1165,12 @@ class Wx26AboutWindow(wx.Frame):
         self.Destroy()
 
 
-class ExportWindow(wx.Frame):
-
-    """ Shows the dialog for exporting the song list. """
-
-    def __init__(self, parent):
-        wx.Frame.__init__(self, parent, -1, 'Export song list',
-                          style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        self.parent = parent
-        self.__layoutWindow()
-
-        pos = parent.GetPosition()
-        parentSize = parent.GetSize()
-        thisSize = self.GetSize()
-        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
-        pos[1] += (parentSize[1] / 2) - (thisSize[1] / 2)
-        self.SetPosition(pos)
-
-        self.Show()
-
-    def __layoutWindow(self):
-        self.panel = wx.Panel(self)
-        vsizer = wx.BoxSizer(wx.VERTICAL)
-
-        text = wx.StaticText(self.panel, -1,
-                             'This will save the entire song list as a tab-delimited text file, which can\n'
-                             'then be imported into a spreadsheet or other database program.  It\n'
-                             'writes a file which is essentially similar to the titles.txt file.')
-        vsizer.Add(text, flag = wx.ALIGN_CENTER)
-
-        cb = wx.CheckBox(self.panel, -1, 'Write identical artist/title files to one line')
-        self.sameSongOneLine = cb
-        vsizer.Add(cb, flag = wx.TOP, border = 10)
-
-        songDb = self.parent.KaraokeMgr.SongDB
-        if not songDb.GotTitles and not songDb.GotArtists:
-            # No songs/titles, so can't unify.
-            cb.Enable(False)
-
-        hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        b = wx.Button(self.panel, wx.ID_OK, 'Export')
-        self.Bind(wx.EVT_BUTTON, self.clickedOK, b)
-        hsizer.Add(b, flag = 0)
-        b = wx.Button(self.panel, wx.ID_CANCEL, 'Cancel')
-        self.Bind(wx.EVT_BUTTON, self.clickedCancel, b)
-        hsizer.Add(b, flag = wx.LEFT, border = 10)
-        vsizer.Add(hsizer, flag = wx.ALIGN_CENTER | wx.TOP | wx.LEFT | wx.RIGHT, border = 10)
-
-        hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        hsizer.Add(vsizer, flag = wx.EXPAND | wx.ALL, border = 10,
-                   proportion = 1)
-
-        self.panel.SetSizerAndFit(hsizer)
-        self.Fit()
-
-    def clickedOK(self, event):
-        oneLine = self.sameSongOneLine.IsChecked()
-        self.Show(False)
-
-        dlg = wx.FileDialog(self, 'Export file',
-                            wildcard = 'Text Files (*.txt)|*.txt|All files|*',
-                            style = wx.SAVE | wx.OVERWRITE_PROMPT)
-        result = dlg.ShowModal()
-        if result != wx.ID_OK:
-            dlg.Destroy()
-            self.Destroy()
-            return
-
-        filename = dlg.GetPath()
-        dlg.Destroy()
-
-        file = codecs.open(filename, 'w', 'utf-8')
-
-        songDb = self.parent.KaraokeMgr.SongDB
-        if oneLine:
-            songDb.SelectSort('title')
-        else:
-            songDb.SelectSort('filename')
-
-        for song in songDb.SongList:
-            if oneLine:
-                file.write(song.getDisplayFilenames())
-            else:
-                file.write(song.DisplayFilename)
-            if songDb.GotTitles:
-                file.write('\t%s' % song.Title)
-            if songDb.GotArtists:
-                file.write('\t%s' % song.Artist)
-            file.write('\n')
-
-        self.Destroy()
-
-    def clickedCancel(self, event):
-        self.Show(False)
-        self.Destroy()
-
-
 class EditTitlesWindow(wx.Frame):
 
     """ The dialog that allows the user to edit artists and titles
     on-the-fly. """
 
     def __init__(self, parent, KaraokeMgr, songs):
-#        wx.Frame.__init__(self, parent, -1, 'Edit artists / titles', style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
         wx.Frame.__init__(self, parent, wx.ID_ANY, 'Edit artists / titles', style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN)
         self.parent = parent
         self.KaraokeMgr = KaraokeMgr
@@ -1502,266 +1330,10 @@ def ErrorPopup (ErrorString):
     wx.MessageBox(ErrorString, "Error", wx.OK | wx.ICON_ERROR)
 
 
-# Folder View class subclassed from WxPanel, containing a WxTreeCtrl.
-# There is no built in file browser with WxPython, so this was
-# implemented using just a basic tree control.
-#class FileTree (wx.Panel):
-#    def __init__(self, parent, id, KaraokeMgr, x, y):
-#        wx.Panel.__init__(self, parent, id)
-#        self.KaraokeMgr = KaraokeMgr
-#
-#        # Create the tree control
-#        TreeStyle = wx.TR_NO_LINES|wx.TR_HAS_BUTTONS|wx.SUNKEN_BORDER|wx.TR_MULTIPLE
-#        self.FileTree = wx.TreeCtrl(self, -1, wx.Point(x, y), style=TreeStyle)
-#        # Find the correct icons path. If fully installed on Linux this will
-#        # be sys.prefix/share/pykaraoke/icons. Otherwise look for it in the
-#        # current directory.
-#        if (os.path.isfile("icons/folder_open_16.png")):
-#            iconspath = "icons"
-#        else:
-#            iconspath = os.path.join(sys.prefix, "share/pykaraoke/icons")
-#        self.FolderOpenIcon = wx.Bitmap(os.path.join(iconspath, "folder_open_16.png"))
-#        self.FolderClosedIcon = wx.Bitmap(os.path.join(iconspath, "folder_close_16.png"))
-#        self.FileIcon = wx.Bitmap(os.path.join(iconspath, "audio_16.png"))
-#        self.ImageList = wx.ImageList(16, 16)
-#        self.FolderOpenIconIndex = self.ImageList.Add(self.FolderOpenIcon)
-#        self.FolderClosedIconIndex = self.ImageList.Add(self.FolderClosedIcon)
-#        self.FileIconIndex = self.ImageList.Add(self.FileIcon)
-#        self.FileTree.AssignImageList(self.ImageList)
-#        self.CreateTreeRoot()
-#        wx.EVT_TREE_ITEM_EXPANDING(self, wx.ID_ANY, self.OnFileExpand)
-#        wx.EVT_TREE_ITEM_COLLAPSING(self, wx.ID_ANY, self.OnFileCollapse)
-#        wx.EVT_TREE_ITEM_ACTIVATED(self, wx.ID_ANY, self.OnFileSelected)
-#
-#        # Create the status bar
-#        self.StatusBar = wx.StatusBar(self, -1)
-#        self.StatusBar.SetStatusText ("File Browser View")
-#
-#        # Create a sizer for the tree view and status bar
-#        self.VertSizer = wx.BoxSizer(wx.VERTICAL)
-#        self.VertSizer.Add(self.FileTree, 1, wx.EXPAND, 5)
-#        self.VertSizer.Add(self.StatusBar, 0, wx.EXPAND, 5)
-#        self.SetSizer(self.VertSizer)
-#        self.Show(True)
-#
-#        # Add handlers for right-click in the results box
-#        wx.EVT_TREE_ITEM_RIGHT_CLICK(self, wx.ID_ANY, self.OnRightClick)
-#
-#        # Create IDs for popup menu
-#        self.menuPlayId = wx.NewId()
-#        self.menuPlaylistAddId = wx.NewId()
-#        self.menuFileDetailsId = wx.NewId()
-#
-#        # Set up drag into the playlist
-#        self.FileTree.Bind(wx.EVT_TREE_BEGIN_DRAG, self.OnBeginDrag)
-#
-#    # Create the top-level filesystem entry. This is just root directory on Linux
-#    # but on Windows we have to find out the drive letters and show those as
-#    # multiple roots. There doesn't seem to be a portable way to do this with
-#    # WxPython, so this had to check the OS and use the Win32 API if necessary.
-#    def CreateTreeRoot(self):
-#        # Get a drive list on Windows otherwise start at root
-#        if env == ENV_WINDOWS:
-#            try:
-#                import win32api
-#                drives = string.split(win32api.GetLogicalDriveStrings(),'\0')[:-1]
-#            except ImportError:
-#                # No win32api installed.  Just look for all the likely drive
-#                # names exhaustively, excluding A and B (which are
-#                # usually floppy drives and cause an annoying dialog
-#                # to pop up).
-#                drives = []
-#                for letter in 'CDEFGHIJKLMNOPQRSTUVWXYZ':
-#                    drive = '%s:\\' % (letter)
-#                    if os.path.isdir(drive):
-#                        drives.append(drive)
-#
-#            self.TreeRoot = self.FileTree.AddRoot("")
-#            self.RootFolder = ""
-#            for drive in drives:
-#                node = self.FileTree.AppendItem(self.TreeRoot, drive, image=self.FolderClosedIconIndex)
-#                self.FileTree.SetItemHasChildren(node, True)
-#        else:
-#            self.TreeRoot = self.FileTree.AddRoot("/")
-#            self.RootFolder = "/"
-#            # Populate the tree control for the root dir
-#            self.PopulateFolder (self.TreeRoot)
-#        # Start expanded
-#        # Windows ? Alternatively traverse everything by hand as we know what's under root
-#        self.FileTree.Expand(self.TreeRoot)
-#
-#    # Take a directory or file item in the tree and walk upwards to
-#    # generate the full path-string
-#    def GetFullPathForNode(self, tree_node):
-#        full_path = self.FileTree.GetItemText(tree_node)
-#        node = self.FileTree.GetItemParent(tree_node)
-#        while node and node != self.FileTree.GetRootItem():
-#            parent_text = self.FileTree.GetItemText(node)
-#            full_path = os.path.join (parent_text, full_path)
-#            node = self.FileTree.GetItemParent(node)
-#        # Now add on the relevant root folder if necessary ("/" on Linux,
-#        # nothing on Windows, the drive letter node is first ("g:\\")
-#        full_path = os.path.join (self.RootFolder, full_path)
-#        return full_path
-#
-#    # Fill up a folder with the files and subfolders it contains
-#    def PopulateFolder(self, root_node):
-#        # If was already expanded once, delete all children and rescan.
-#        # Could just show the current files if this is inefficient.
-#        self.FileTree.DeleteChildren(root_node)
-#        # Make a sorted list of directories and one for files
-#        full_path = self.GetFullPathForNode(root_node)
-#        filedir_list = os.listdir(full_path)
-#        dir_list = []
-#        file_list = []
-#        for item in filedir_list:
-#            if os.path.isdir (os.path.join (full_path, item)):
-#                dir_list.append(item)
-#            else:
-#                root, ext = os.path.splitext(item)
-#                if self.KaraokeMgr.SongDB.IsExtensionValid(ext):
-#                    file_list.append(item)
-#        dir_list.sort()
-#        file_list.sort()
-#
-#        settings = self.KaraokeMgr.SongDB.Settings
-#
-#        # Populate the tree control, directories then files
-#        for item in dir_list:
-#            if isinstance(item, types.StringType):
-#                item = item.decode(settings.FilesystemCoding)
-#            try:
-#                node = self.FileTree.AppendItem(root_node, item, image=self.FolderClosedIconIndex)
-#            except UnicodeError:
-#                node = self.FileTree.AppendItem(root_node, item.encode('UTF-8', 'replace'), image=self.FolderClosedIconIndex)
-#
-#            self.FileTree.SetItemHasChildren(node, True)
-#        for item in file_list:
-#            if isinstance(item, types.StringType):
-#                item = item.decode(settings.FilesystemCoding)
-#            try:
-#                node = self.FileTree.AppendItem(root_node, item, image=self.FileIconIndex)
-#            except UnicodeError:
-#                node = self.FileTree.AppendItem(root_node, item.encode('UTF-8', 'replace'), image=self.FileIconIndex)
-#            self.FileTree.SetItemBold(node)
-#
-#    def getSelectedSongs(self):
-#        """ Returns a list of the selected songs. """
-#
-#        settings = self.KaraokeMgr.SongDB.Settings
-#
-#        songs = []
-#        for selected_node in self.FileTree.GetSelections():
-#            filename = self.FileTree.GetItemText(selected_node)
-#            fullpath = self.GetFullPathForNode(selected_node)
-#
-#            song = pykdb.SongStruct(fullpath, settings, filename)
-#            songs.append(song)
-#
-#        return songs
-#
-#    # Handle a folder expand event
-#    def OnFileExpand(self, event):
-#        expanded_node = event.GetItem()
-#        self.PopulateFolder (expanded_node)
-#        self.FileTree.SetItemImage(expanded_node, self.FolderOpenIconIndex)
-#
-#    # Handle a folder collapse event
-#    def OnFileCollapse(self, event):
-#        collapsed_node = event.GetItem()
-#        self.FileTree.SetItemImage(collapsed_node, self.FolderClosedIconIndex)
-#
-#    # Handle a file selected event. Behaviour is different between Windows and
-#    # Linux - on Linux a folder can be expanded by double-clicking it. On
-#    # Windows the + box must be clicked to expand.
-#    def OnFileSelected(self, event):
-#        selected_node = event.GetItem()
-#        filename = self.FileTree.GetItemText(selected_node)
-#        full_path = self.GetFullPathForNode(selected_node)
-#        if os.path.isdir(full_path):
-#            if self.FileTree.IsExpanded(selected_node):
-#                self.FileTree.Collapse(selected_node)
-#                self.FileTree.SetItemImage(selected_node, self.FolderClosedIconIndex)
-#            else:
-#                self.PopulateFolder(selected_node)
-#                # Windows ?
-#                self.FileTree.Expand(selected_node)
-#                self.FileTree.SetItemImage(selected_node, self.FolderOpenIconIndex)
-#        else:
-#            root, ext = os.path.splitext(filename)
-#            if self.KaraokeMgr.SongDB.IsExtensionValid(ext) and os.path.isfile (full_path):
-#                # Create a SongStruct because that's what karaoke mgr wants
-#                settings = self.KaraokeMgr.SongDB.Settings
-#                song = pykdb.SongStruct(full_path, settings, filename)
-#                self.KaraokeMgr.PlayWithoutPlaylist(song)
-#
-#    # Handle a right-click on an item (show a popup)
-#    def OnRightClick(self, event):
-#        selected_node = event.GetItem()
-#        self.PopupFilename = self.FileTree.GetItemText(selected_node)
-#        self.PopupFullPath = self.GetFullPathForNode(selected_node)
-#        # Only do a popup if it's not a directory (must be a karaoke song then
-#        # due to the filtering)
-#        if not os.path.isdir(self.PopupFullPath):
-#            menu = wx.Menu()
-#            menu.Append( self.menuPlayId, "Play song" )
-#            wx.EVT_MENU( menu, self.menuPlayId, self.OnMenuSelection )
-#            menu.Append( self.menuPlaylistAddId, "Add selected to playlist" )
-#            wx.EVT_MENU( menu, self.menuPlaylistAddId, self.OnMenuSelection )
-#            menu.Append( self.menuFileDetailsId, "File Details" )
-#            wx.EVT_MENU( menu, self.menuFileDetailsId, self.OnMenuSelection )
-#            self.PopupMenu( menu, event.GetPoint() )
-#
-#    # Handle the popup menu events
-#    def OnMenuSelection( self, event ):
-#        root, ext = os.path.splitext(self.PopupFilename)
-#        if self.KaraokeMgr.SongDB.IsExtensionValid(ext) and os.path.isfile (self.PopupFullPath):
-#            # Create a SongStruct because that's what karaoke mgr wants
-#            settings = self.KaraokeMgr.SongDB.Settings
-#            song = pykdb.SongStruct(self.PopupFullPath, settings, self.PopupFilename)
-#            # Now respond to the menu choice
-#            if event.GetId() == self.menuPlayId:
-#                self.KaraokeMgr.PlayWithoutPlaylist(song)
-#            elif event.GetId() == self.menuPlaylistAddId:
-#                for song in self.getSelectedSongs():
-#                    self.KaraokeMgr.AddToPlaylist(song, self)
-#            elif event.GetId() == self.menuFileDetailsId:
-#                wx.MessageBox("File: " + self.PopupFullPath, "File details", wx.OK)
-#
-#    # Start drag handler. Code from WxPython Wiki
-#    def OnBeginDrag(self, event):
-#        songs = self.getSelectedSongs()
-#
-#        if songs:
-#            def DoDragDrop(songs = songs):
-#                # Convert the songs list to a string. No extra data necessary
-#                # for drag-drop from here, just the song struct.
-#                data = SongStructDataObject(songs, None)
-#
-#                # Also store this data object in the globalDragObject pointer,
-#                # to work around a wxPython bug.
-#                global globalDragObject
-#                globalDragObject = data
-#
-#                # Create drop source and begin drag-and-drop.
-#                dropSource = wx.DropSource(self.FileTree)
-#                dropSource.SetData(data)
-#
-#                # The docs say the parameter here should be one of
-#                # wx.DragCopy/DragMove/etc., but in practice it appears that
-#                # only wx.DragNone works on Windows.
-#                if env == ENV_WINDOWS:
-#                    res = dropSource.DoDragDrop(wx.DragNone)
-#                else:
-#                    res = dropSource.DoDragDrop(wx.DragCopy)
-#
-#            # Can't call dropSource.DoDragDrop here..
-#            wx.CallAfter(DoDragDrop)
-
-
 # This defines a custom "format" for our local drag-and-drop data
 # type: a list of SongStruct objects.
 songStructListFormat = wx.CustomDataFormat('SongStructList')
+
 
 class SongStructDataObject(wx.PyDataObjectSimple):
     """This class is used to encapsulate a list of SongStruct objects,
@@ -2082,10 +1654,6 @@ class SearchResultsPanel (wx.Panel):
         # Doesn't bring up a popup if no items are in the list
         if self.ListPanel.GetItemCount() > 0:
             menu = wx.Menu()
-#            menu.Append( self.menuPlayId, "Play song" )
-#            wx.EVT_MENU( menu, self.menuPlayId, self.OnMenuSelection )
-#            menu.Append( self.menuPlaylistAddId, "Add selected to playlist" )
-#            wx.EVT_MENU( menu, self.menuPlaylistAddId, self.OnMenuSelection )
             menu.Append( self.menuPlaylistEditTitlesId, "Edit selected titles / artists" )
             wx.EVT_MENU( menu, self.menuPlaylistEditTitlesId, self.OnMenuSelection )
             menu.Append( self.menuFileDetailsId, "File Details" )
@@ -2099,11 +1667,7 @@ class SearchResultsPanel (wx.Panel):
     # Handle popup menu selection events
     def OnMenuSelection( self, event ):
         song = self.SongStructList[self.ListPanel.GetItemData(self.RightClickedItemIndex)]
-#        if event.GetId() == self.menuPlayId:
-#            self.KaraokeMgr.PlayWithoutPlaylist(song)
-#        elif event.GetId() == self.menuPlaylistAddId:
-#            for song in self.getSelectedSongs():
-#                self.KaraokeMgr.AddToPlaylist(song, self)
+
         if event.GetId() == self.menuPlaylistEditTitlesId:
             EditTitlesWindow(self.mainWindow, self.KaraokeMgr, self.getSelectedSongs())
         elif event.GetId() == self.menuFileDetailsId:
@@ -2215,12 +1779,6 @@ class Playlist (wx.Panel):
         # Add handlers for the listbox
         wx.EVT_LIST_ITEM_ACTIVATED(self, wx.ID_ANY, self.OnFileSelected)
 
-#        # Store the width (in pixels not chars) of the longest title
-#        self.MaxTitleWidth = 0
-#        self.MaxArtistWidth = 0
-#        self.MaxFilenameWidth = 0
-#        self.MaxPerformerWidth = 0
-
         # Resize column width to the same as list width (or max title width, which larger)
         wx.EVT_SIZE(self.Playlist, self.OnResize)
 
@@ -2317,14 +1875,10 @@ class Playlist (wx.Panel):
     def play(self):
         """ Start the playlist playing. """
         if self.Playlist.GetItemCount() > 0:
-#            self.KaraokeMgr.PlaylistStart(self.Playlist.GetFirstSelected(), self)
-
             sel = self.Playlist.GetFirstSelected()
             if sel == -1:
 				sel = 0
             self.KaraokeMgr.PlaylistStart(sel, self)
-#            self.Playlist.DeleteItem(sel)
-#            self.PlaylistSongStructList.pop(sel)
 
 
     def clear(self):
@@ -2334,12 +1888,6 @@ class Playlist (wx.Panel):
             self.Playlist.DeleteItem(sel)
             self.PlaylistSongStructList.pop(sel)
 		    
-#        """ Empty the playlist. """
-#        self.Playlist.DeleteAllItems()
-#        self.PlaylistSongStructList = []
-#        self.MaxFilenameWidth = 0
-#        self.MaxArtistWidth = 0
-#        self.MaxPerformerWidth = 0
 
     def OnResize(self, event):
         event.Skip()
@@ -2551,534 +2099,6 @@ class Playlist (wx.Panel):
             index += 1
 
 
-class PrintSongListWindow(wx.Frame):
-    """ The dialog for printing a song list and selecting print options. """
-
-    def __init__(self, parent):
-        wx.Frame.__init__(self, parent, -1, 'Print Song List',
-                          style = wx.DEFAULT_FRAME_STYLE|wx.FRAME_FLOAT_ON_PARENT)
-        self.parent = parent
-        self.KaraokeMgr = parent.KaraokeMgr
-
-        self.__layoutWindow()
-
-        pos = parent.GetPosition()
-        parentSize = parent.GetSize()
-        thisSize = self.GetSize()
-        pos[0] += (parentSize[0] / 2) - (thisSize[0] / 2)
-        pos[1] += (parentSize[1] / 2) - (thisSize[1] / 2)
-        self.SetPosition(pos)
-
-        self.Show()
-
-    def __layoutWindow(self):
-        self.panel = wx.Panel(self)
-        vsizer = wx.BoxSizer(wx.VERTICAL)
-
-        label = wx.StaticText(self.panel, -1, 'The song database includes %s songs.' % (len(self.KaraokeMgr.SongDB.FullSongList)))
-        vsizer.Add(label, flag = wx.ALIGN_CENTER)
-
-        gsizer = wx.FlexGridSizer(0, 2, 5, 0)
-        label = wx.StaticText(self.panel, -1, 'Sort by:')
-        gsizer.Add(label, flag = wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, border = 5)
-        choices = ['Title', 'Title (filename not printed)',
-                   'Artist', 'Artist (filename not printed)',
-                   'Filename']
-        c = wx.Choice(self.panel, -1, choices = choices)
-        c.SetSelection(0)
-        self.sort = c
-        gsizer.Add(c, flag = 0)
-
-        label = wx.StaticText(self.panel, -1, 'Pages:')
-        gsizer.Add(label, flag = wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, border = 5)
-        hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        choices = ['Odd and even pages', 'Odd pages only', 'Even pages only']
-        c = wx.Choice(self.panel, -1, choices = choices)
-        c.SetSelection(0)
-        self.pages = c
-        hsizer.Add(c, flag = 0)
-        cb = wx.CheckBox(self.panel, -1, 'Back-to-front')
-        self.backToFront = cb
-        hsizer.Add(cb, flag = wx.LEFT | wx.ALIGN_CENTER_VERTICAL, border = 10)
-        gsizer.Add(hsizer, flag = 0)
-
-        label = wx.StaticText(self.panel, -1, 'Extra margin:')
-        gsizer.Add(label, flag = wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, border = 5)
-        hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        choices = ['No', 'Left', 'Right', 'Both']
-        c = wx.Choice(self.panel, -1, choices = choices)
-        c.SetSelection(0)
-        self.extraMargin = c
-        hsizer.Add(c, flag = 0)
-        gsizer.Add(hsizer, flag = 0)
-
-        label = wx.StaticText(self.panel, -1, 'Font size:')
-        gsizer.Add(label, flag = wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, border = 5)
-        choices = ['6', '8', '10', '12']
-        c = wx.ComboBox(self.panel, -1, choices = choices)
-        if len(self.KaraokeMgr.SongDB.FullSongList) >= 3000:
-            # There's a lot of songs here.  Assume the user wants to
-            # save a bit of paper, and make the default be for a
-            # smaller font.
-            c.SetValue('8')
-        else:
-            c.SetValue('10')
-
-        self.fontSize = c
-        gsizer.Add(c, flag = 0)
-
-        vsizer.Add(gsizer, flag = wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, border = 10)
-        vsizer.Add((0, 0), proportion = 1)
-
-        hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        b = wx.Button(self.panel, -1, 'Page Setup')
-        self.Bind(wx.EVT_BUTTON, self.clickedPageSetup, b)
-        hsizer.Add(b, flag = 0)
-
-        b = wx.Button(self.panel, -1, 'Preview')
-        self.Bind(wx.EVT_BUTTON, self.clickedPreview, b)
-        hsizer.Add(b, flag = wx.LEFT, border = 10)
-
-        b = wx.Button(self.panel, wx.ID_OK, 'Print')
-        self.Bind(wx.EVT_BUTTON, self.clickedOK, b)
-        hsizer.Add(b, flag = wx.LEFT, border = 10)
-
-        b = wx.Button(self.panel, wx.ID_CANCEL, 'Cancel')
-        self.Bind(wx.EVT_BUTTON, self.clickedCancel, b)
-        hsizer.Add(b, flag = wx.LEFT, border = 10)
-        vsizer.Add(hsizer, flag = wx.ALIGN_CENTER | wx.TOP, border = 10)
-
-        hsizer = wx.BoxSizer(wx.HORIZONTAL)
-        hsizer.Add(vsizer, flag = wx.EXPAND | wx.ALL, border = 10,
-                   proportion = 1)
-
-        self.panel.SetSizerAndFit(hsizer)
-        self.Fit()
-
-    def __selectSort(self):
-        sortKey = [('title', 3), ('title', 2),
-                   ('artist', 3), ('artist', 2),
-                   ('filename', 2)]
-        sort, numColumns = sortKey[self.sort.GetSelection()]
-
-        songDb = self.KaraokeMgr.SongDB
-        songDb.SelectSort(sort)
-        title = 'Songs by %s' % (sort.title())
-
-        return title, numColumns
-
-    def __makePrintout(self, title, numColumns, now):
-        # bit 0x1 means print odd pages, bit 0x2 means print even pages.
-        choices = [0x3, 0x1, 0x2]
-        pages = choices[self.pages.GetSelection()]
-
-        backToFront = self.backToFront.IsChecked()
-
-        # bit 0x1 means margin on the left, bit 0x2 means margin on
-        # the right.
-        choices = [0x0, 0x1, 0x2, 0x3]
-        marginBits = choices[self.extraMargin.GetSelection()]
-        ((mleft, mtop), (mright, mbottom)) = self.parent.margins
-        if marginBits & 0x1:
-            mleft += 12.5
-        if marginBits & 0x2:
-            mright += 12.5
-        margins = (wx.Point(mleft, mtop), wx.Point(mright, mbottom))
-
-        try:
-            fontSize = float(self.fontSize.GetValue())
-        except:
-            fontSize = 4
-
-        printout = SongListPrintout(
-            self.KaraokeMgr.SongDB, title, numColumns, now,
-            marginBits, margins, pages, backToFront, fontSize)
-
-        return printout
-
-    def clickedPageSetup(self, event):
-        data = wx.PageSetupDialogData()
-        data.EnablePrinter(False)
-        data.SetPrintData(self.parent.pdata)
-
-        data.SetDefaultMinMargins(True)
-        data.SetMarginTopLeft(self.parent.margins[0])
-        data.SetMarginBottomRight(self.parent.margins[1])
-
-        dlg = wx.PageSetupDialog(self, data)
-        if dlg.ShowModal() == wx.ID_OK:
-            data = dlg.GetPageSetupData()
-            self.parent.pdata = wx.PrintData(data.GetPrintData()) # force a copy
-            self.parent.pdata.SetPaperId(data.GetPaperId())
-            self.parent.margins = (data.GetMarginTopLeft(),
-                                   data.GetMarginBottomRight())
-        dlg.Destroy()
-
-    def clickedPreview(self, event):
-        title, numColumns = self.__selectSort()
-        now = time.time()
-        printout1 = self.__makePrintout(title, numColumns, now)
-        printout2 = self.__makePrintout(title, numColumns, now)
-
-        data = wx.PrintDialogData(self.parent.pdata)
-        preview = wx.PrintPreview(printout1, printout2, data)
-
-        if not preview.Ok():
-            wx.MessageBox("Unable to create PrintPreview!", "Error")
-        else:
-            # create the preview frame such that it overlays the app frame
-            frame = wx.PreviewFrame(preview, self, "Print Preview",
-                                    pos = self.parent.GetPosition(),
-                                    size = self.parent.GetSize())
-            frame.Initialize()
-            frame.Show()
-
-    def clickedOK(self, event):
-        self.Show(False)
-        title, numColumns = self.__selectSort()
-        now = time.time()
-        printout = self.__makePrintout(title, numColumns, now)
-
-        data = wx.PrintDialogData(self.parent.pdata)
-        printer = wx.Printer(data)
-        useSetupDialog = True
-        if not printer.Print(self, printout, useSetupDialog) \
-           and printer.GetLastError() == wx.PRINTER_ERROR:
-            wx.MessageBox(
-                "There was a problem printing.\n"
-                "Perhaps your current printer is not set correctly?",
-                "Printing Error", wx.OK)
-            self.Show(True)
-        else:
-            data = printer.GetPrintDialogData()
-            data = wx.PrintData(data.GetPrintData()) # force a copy
-            self.parent.pdata = data
-            self.Destroy()
-        printout.Destroy()
-
-    def clickedCancel(self, event):
-        self.Show(False)
-        self.Destroy()
-
-
-class SongListPrintout(wx.Printout):
-    """This class is used to manage the printout of the song list.
-    Much of it was borrowed from the example given in the book
-    "wxPython In Action" by Rappin and Dunn. """
-
-    def __init__(self, songDb, title, numColumns, now, marginBits,
-                 margins, pages, backToFront, fontSize):
-        wx.Printout.__init__(self, title)
-        self.songDb = songDb
-        self.numColumns = numColumns
-        self.marginBits = marginBits
-        self.margins = margins
-        self.pages = pages
-        self.backToFront = backToFront
-        self.requestedFontSize = fontSize
-
-        self.printDate = time.strftime('Printed %b %d, %Y', time.localtime(now))
-
-    def HasPage(self, page):
-        return page <= self.numPages
-
-    def GetPageInfo(self):
-        return (1, self.numPages, 1, self.numPages)
-
-
-    def CalculateScale(self, dc):
-        # Scale the DC such that the printout is roughly the same as
-        # the screen scaling.
-        ppiPrinterX, ppiPrinterY = self.GetPPIPrinter()
-        ppiScreenX, ppiScreenY = self.GetPPIScreen()
-        logScale = float(ppiPrinterX) / float(ppiScreenX)
-
-        if env == ENV_POSIX:
-            # For some reason on Linux this scale seems to come out a
-            # little bit wrong.  Experimentally, it seems it really
-            # wants to be 1.0, but it always comes out 72/86 instead.
-            # Check for this special case.
-            if ppiPrinterX == 72 and ppiScreenX == 86:
-                logScale = 1
-
-        # Now adjust if the real page size is reduced (such as when
-        # drawing on a scaled wx.MemoryDC in the Print Preview.)  If
-        # page width == DC width then nothing changes, otherwise we
-        # scale down for the DC.
-        pw, ph = self.GetPageSizePixels()
-        dw, dh = dc.GetSize()
-
-        # Rather than using dc.SetUserScale(), which seems to have
-        # issues on Linux platforms (it keeps things at integer
-        # values, which means at large scale factors they get all
-        # wonky), we'll perform the scaling explicitly.
-        self.scale = logScale * float(dw) / float(pw)
-
-        # Find the logical units per millimeter (for calculating the
-        # margins)
-        self.logUnitsMM = self.scale * float(ppiPrinterX) / (logScale*25.4)
-
-
-    def CalculateLayout(self, dc):
-        self.fontSize = self.requestedFontSize * self.scale
-        if self.fontSize < 1:
-            self.fontSize = 1
-
-        self.titleFont = wx.Font(self.fontSize * 1.5, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_BOLD)
-        self.headerFont = wx.Font(self.fontSize, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-        self.dateFont = wx.Font(self.fontSize, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.NORMAL)
-
-        self.font = wx.Font(self.fontSize, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-
-        dc.SetFont(self.titleFont)
-        titleHeight = dc.GetCharHeight()
-        
-        dc.SetFont(self.font)
-        self.lineHeight = dc.GetCharHeight()
-
-        # Determine the position of the margins and the
-        # page/line height
-        topLeft, bottomRight = self.margins
-        dw, dh = dc.GetSize()
-        self.x1 = topLeft.x * self.logUnitsMM
-        self.y1 = topLeft.y * self.logUnitsMM
-
-        # Give extra clearance for the title.
-        self.y1 += titleHeight * 1.5
-
-        # A little extra margin for the header line.
-        self.y0 = self.y1
-        self.y1 += self.logUnitsMM
-
-        self.x2 = dc.DeviceToLogicalXRel(dw) - bottomRight.x * self.logUnitsMM
-        self.y2 = dc.DeviceToLogicalYRel(dh) - bottomRight.y * self.logUnitsMM
-
-        # Give extra clearance for the footer.
-        self.y2 -= (self.lineHeight)
-        
-        assert self.y2 > self.y1
-
-        # Divide the space into columns.
-        w = self.x2 - self.x1
-        numColumns = min(len(self.songDb.SortKeys), self.numColumns)
-        if numColumns == 3:
-            self.c1 = self.x1 + int(0.4 * w)
-            self.c2 = self.x1 + int(0.8 * w)
-        elif numColumns == 2:
-            self.c1 = self.x1 + int(0.5 * w)
-            self.c2 = self.x2
-        elif numColumns == 1:
-            self.c1 = self.x2
-            self.c2 = self.x2
-
-        # use a 1mm buffer around the inside of the box, and a few
-        # pixels between each line
-        self.pageHeight = self.y2 - self.y1 - 2*self.logUnitsMM
-
-        self.linesPerPage = int(self.pageHeight / self.lineHeight)
-        assert self.linesPerPage > 0
-
-        # Normalize so we don't end up with a little extra whitespace
-        # on the bottom
-        self.pageHeight = self.linesPerPage * self.lineHeight
-        self.y2 = self.y1 + self.pageHeight + 2*self.logUnitsMM
-
-        # The top page is reserved for column headers.
-        self.linesPerPage -= 1
-        self.y1 += self.lineHeight
-
-    def OnPreparePrinting(self):
-        # calculate the number of pages
-        dc = self.GetDC()
-        self.CalculateScale(dc)
-        self.CalculateLayout(dc)
-
-        numPages = (len(self.songDb.SongList) + self.linesPerPage - 1) / self.linesPerPage
-
-        if self.pages == 0x3:
-            # Print both odd and even pages.
-            self.numPages = numPages
-
-        elif self.pages == 0x1:
-            # Print odd pages only.
-            self.numPages = (numPages + 1) / 2
-
-        elif self.pages == 0x2:
-            # Print even pages only.
-            self.numPages = numPages / 2
-
-    def OnPrintPage(self, page):
-        # Map the virtual page number to the actual page number.a
-        if self.backToFront:
-            page = self.numPages - page + 1
-
-        if self.pages == 0x3:
-            # Print both odd and even pages.
-            pass
-
-        elif self.pages == 0x1:
-            # Print odd pages only.
-            page = (page * 2) - 1
-
-        elif self.pages == 0x2:
-            # Print even pages only.
-            page = (page * 2)
-
-        dc = self.GetDC()
-        self.CalculateScale(dc)
-        self.CalculateLayout(dc)
-
-        # draw a page outline at the margin points
-        pen = wx.ThePenList.FindOrCreatePen(wx.BLACK, 0, wx.SOLID)
-        dc.SetPen(pen)
-        dc.SetBrush(wx.TRANSPARENT_BRUSH)
-        r = wx.RectPP((self.x1, self.y0),
-                      (self.x2, self.y2))
-        dc.DrawRectangleRect(r)
-
-        # Also draw lines around the column headers, and between the
-        # columns.
-        if self.c1 != self.x2:
-            dc.DrawLine(self.c1, self.y0, self.c1, self.y2)
-        if self.c2 != self.x2:
-            dc.DrawLine(self.c2, self.y0, self.c2, self.y2)
-        dc.DrawLine(self.x1, self.y1, self.x2, self.y1)
-
-        # Draw column a for this page
-        dc.DestroyClippingRegion()
-        dc.SetClippingRect((self.x1, self.y0,
-                            self.c1 - self.x1, self.y2 - self.y0))
-        x = self.x1 + self.logUnitsMM
-        a = self.songDb.SortKeys[0]
-        dc.SetFont(self.headerFont)
-        dc.DrawText(a.title(), x, self.y0 + self.logUnitsMM)
-
-        dc.SetFont(self.font)
-        line = (page - 1) * self.linesPerPage
-        y = self.y1 + self.logUnitsMM
-        while line < (page * self.linesPerPage):
-            song = self.songDb.SongList[line]
-            a, b, c = self.songDb.GetSongTuple(song)
-            self.__drawClippedText(dc, a, x, y, self.c1 - self.x1)
-
-            y += self.lineHeight
-            line += 1
-            if line >= len(self.songDb.SongList):
-                break
-
-        if self.c1 != self.x2:
-            # Draw column b
-            dc.DestroyClippingRegion()
-            dc.SetClippingRect((self.c1, self.y0,
-                                self.c2 - self.c1, self.y2 - self.y0))
-            x = self.c1 + self.logUnitsMM
-            b = self.songDb.SortKeys[1]
-            dc.SetFont(self.headerFont)
-            dc.DrawText(b.title(), x, self.y0 + self.logUnitsMM)
-
-            dc.SetFont(self.font)
-            line = (page - 1) * self.linesPerPage
-            y = self.y1 + self.logUnitsMM
-            while line < (page * self.linesPerPage):
-                song = self.songDb.SongList[line]
-                a, b, c = self.songDb.GetSongTuple(song)
-                self.__drawClippedText(dc, b, x, y, self.c2 - self.c1)
-
-                y += self.lineHeight
-                line += 1
-                if line >= len(self.songDb.SongList):
-                    break
-
-        if self.c2 != self.x2:
-            # Draw column c
-            dc.DestroyClippingRegion()
-            dc.SetClippingRect((self.c2, self.y0,
-                                self.x2 - self.c2, self.y2 - self.y0))
-            x = self.c2 + self.logUnitsMM
-            c = self.songDb.SortKeys[2]
-            dc.SetFont(self.headerFont)
-            dc.DrawText(c.title(), x, self.y0 + self.logUnitsMM)
-
-            dc.SetFont(self.font)
-            line = (page - 1) * self.linesPerPage
-            y = self.y1 + self.logUnitsMM
-            while line < (page * self.linesPerPage):
-                song = self.songDb.SongList[line]
-                a, b, c = self.songDb.GetSongTuple(song)
-                self.__drawClippedText(dc, c, x, y, self.x2 - self.c2)
-
-                y += self.lineHeight
-                line += 1
-                if line >= len(self.songDb.SongList):
-                    break
-
-        dc.DestroyClippingRegion()
-
-        # Draw the page title.
-        dc.SetFont(self.titleFont)
-        title = 'Karaoke Songs By %s' % (self.songDb.Sort.title())
-        w, h = dc.GetTextExtent(title)
-        y = self.y0 - h * 1.5 - self.logUnitsMM
-        if y >= 0:
-            dc.DrawText(title, (self.x1 + self.x2 - w) / 2, y)
-
-        # Draw the page number and print date.
-        if self.marginBits == 0x01:
-            # Margin on the left: put the page number on the right.
-            dc.SetFont(self.font)
-            w, h = dc.GetTextExtent(str(page))
-            dc.DrawText(str(page), self.x2 - w, self.y2 + self.logUnitsMM)
-
-            dc.SetFont(self.dateFont)
-            w, h = dc.GetTextExtent(self.printDate)
-            dc.DrawText(self.printDate, self.x1, self.y2 + self.logUnitsMM)
-
-        elif self.marginBits == 0x02:
-            # Margin on the right: put the page number on the left.
-            dc.SetFont(self.font)
-            w, h = dc.GetTextExtent(str(page))
-            dc.DrawText(str(page), self.x1, self.y2 + self.logUnitsMM)
-
-            dc.SetFont(self.dateFont)
-            w, h = dc.GetTextExtent(self.printDate)
-            dc.DrawText(self.printDate, self.x2 - w, self.y2 + self.logUnitsMM)
-
-        else:
-            # No margin, or double margin: center the page number.
-            dc.SetFont(self.font)
-            w, h = dc.GetTextExtent(str(page))
-            dc.DrawText(str(page), (self.x1 + self.x2 - w) / 2, self.y2 + self.logUnitsMM)
-
-            dc.SetFont(self.dateFont)
-            w, h = dc.GetTextExtent(self.printDate)
-            dc.DrawText(self.printDate, self.x2 - w, self.y2 + self.logUnitsMM)
-
-        return True
-
-    def __drawClippedText(self, dc, text, x, y, width):
-        """ Draws the text onto the dc, respecting the specified
-        clipping width. """
-
-        # On Windows, the clipping region we have already set seems to
-        # work fine, and gives superior results.  So just rely on
-        # that.
-        if env == ENV_WINDOWS:
-            dc.DrawText(text, x, y)
-            return
-
-        # On Linux, it appears that the clipping region is commonly
-        # ignored by the printer driver.  So we have to clip it by
-        # hand.  We do this by determining the smallest subset of the
-        # text that fits within the width.
-
-        w, h = dc.GetTextExtent(text)
-        while w > width:
-            text = text[:-1]
-            w, h = dc.GetTextExtent(text)
-
-        dc.DrawText(text, x, y)
-
-
 class TabOne(wx.Panel):
     def __init__(self, parent, KaraokeMgr):
 		
@@ -3185,7 +2205,6 @@ class TabOne(wx.Panel):
             wx.MessageBox("No songs selected.")
             return
             
-        self.UpdateVolume()
         self.KaraokeMgr.PlayWithoutPlaylist(songs[0])
 
 
@@ -3198,13 +2217,11 @@ class TabOne(wx.Panel):
             return
 
         for song in songs:
-            self.UpdateVolume()
             self.KaraokeMgr.AddToPlaylist(song, self, 1)
 
             
     def OnStartPlaylistClicked(self, event):
 		# Panel 2 play button pressed
-        self.UpdateVolume()
         self.PlaylistPanel.play()
 
 
@@ -3213,11 +2230,6 @@ class TabOne(wx.Panel):
         self.PlaylistPanel.clear()
 
 
-    def UpdateVolume(self):
-        """ Synchronises the volume spinner and the PyGame music instance """
-#        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
-
-        
 class TabTwo(wx.Panel):
     def __init__(self, parent, KaraokeMgr):
 		
@@ -3304,6 +2316,10 @@ class TabTwo(wx.Panel):
         self.SetAutoLayout(True)
         self.SetSizer(self.MainSizer)
         
+        # This attempts to play an item in the tab 2 play list
+        # three seconds after the previous items stops playing
+        # this way it can be made to start some backround music
+        # between karaoke singers.
         # Message subscriptions
         pub.subscribe(self.PlaySomething, 'playsomething.update')
 
@@ -3383,7 +2399,6 @@ class TabTwo(wx.Panel):
             
     def OnStartPlaylistClicked(self, event):
 		# Panel 2 play button pressed
-        self.UpdateVolume()
         self.PlaylistPanel.play()
 
 
@@ -3392,23 +2407,20 @@ class TabTwo(wx.Panel):
         self.PlaylistPanel.clear()
 
 
-    def UpdateVolume(self):
-        """ Synchronises the volume spinner and the PyGame music instance """
-#        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
-        
-
-class TabThree(wx.Panel):
-    def __init__(self, parent, KaraokeMgr):
-		
-        wx.Panel.__init__(self, parent)
-        
-        self.KaraokeMgr = KaraokeMgr
+#class TabThree(wx.Panel):
+#    def __init__(self, parent, KaraokeMgr):
+#		
+#        wx.Panel.__init__(self, parent)
+#        
+#        self.KaraokeMgr = KaraokeMgr
 
 
 class HelpFrame(wx.Frame): 
     def __init__(self, parent, title): 
       wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
       
+      # A very basic html help system with a starting page
+      # called pykaraoke.html
       html = wx.html.HtmlWindow(self) 
 		
       if "gtk2" in wx.PlatformInfo: 
@@ -3421,7 +2433,8 @@ class HelpFrame(wx.Frame):
 
 class EffectsConfig(wx.Frame): 
     def __init__(self, parent, KaraokeMgr): 
-
+		
+		# A config system to pick effects or music for the ten instant play buttons
         wx.Frame.__init__(self, parent, wx.ID_ANY, "Sound Effects Config", style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
 
         self.KaraokeMgr = KaraokeMgr
@@ -3689,19 +2702,93 @@ class EffectsConfig(wx.Frame):
 
 
 class BackgroundSound(wx.Frame): 
-    def __init__(self, parent, title): 
+    def __init__(self, parent, title, KaraokeMgr): 
         wx.Frame.__init__(self, parent, wx.ID_ANY, title, style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN, size = (500,600))
-      
-#      html = wx.html.HtmlWindow(self) 
-		
-#      if "gtk2" in wx.PlatformInfo: 
-#         html.SetStandardFonts() 
-         
-#      html.LoadPage("pykaraoke.html")
-        self.Centre()
-        self.Show()            
 
-                
+        self.parent = parent
+        self.KaraokeMgr = KaraokeMgr
+        settings = self.KaraokeMgr.SongDB.Settings
+
+        # Background config options
+        
+         # Add a panel so it looks correct on all platforms
+        self.panel = wx.Panel(self, wx.ID_ANY)
+    
+        vsizer = wx.BoxSizer(wx.VERTICAL)
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+        title = wx.StaticText(self.panel, wx.ID_ANY, 'Background music options.')
+        hsizer.Add(title, 0, wx.ALL | wx.CENTER, 5)
+        vsizer.Add(hsizer, 0, wx.CENTER)
+        vsizer.Add(wx.StaticLine(self.panel,), 0, wx.ALL|wx.EXPAND, 5)
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)
+                      
+        # Enables or disables the auto play-list functionality
+        self.AutoPlayCheckBox = wx.CheckBox(self.panel, -1, "Enable play-list continuous play")
+        self.AutoPlayCheckBox.SetValue(self.KaraokeMgr.SongDB.Settings.AutoPlayList)
+        hsizer.Add(self.AutoPlayCheckBox, flag = wx.LEFT, border = 5)
+        vsizer.Add(hsizer, 0, wx.ALL | wx.LEFT, 5)
+        
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)  
+        hsizer.Add(wx.StaticText(self.panel, wx.ID_ANY, 'This only applies to the Tab 2 right hand play panel.'), 0, wx.ALL | wx.CENTER, 5)
+        vsizer.Add(hsizer, 0, wx.LEFT)
+        vsizer.Add(wx.StaticLine(self.panel,), 0, wx.ALL|wx.EXPAND, 5)
+        
+
+        # The delay before a song automatically starts to play, if their is one in tab 2 panel 2
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)  
+        hsizer.Add(wx.StaticText(self.panel, wx.ID_ANY, 'Secs delay to wait before playing a background song.'), 0, wx.ALL | wx.CENTER, 5)
+        vsizer.Add(hsizer, 0, wx.CENTER)
+        self.sld1 = wx.Slider(self.panel, value = self.KaraokeMgr.SongDB.Settings.Timer, minValue = 1, maxValue = 10, style = wx.SL_HORIZONTAL|wx.SL_LABELS)
+        self.sld1.Bind(wx.EVT_SLIDER, self.OnTimerSet) 
+        vsizer.Add(self.sld1,1,flag = wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL | wx.TOP, border = 20)
+        vsizer.Add(wx.StaticLine(self.panel,), 0, wx.ALL|wx.EXPAND, 5)
+
+        # The master volume control             
+        hsizer = wx.BoxSizer(wx.HORIZONTAL)  
+        hsizer.Add(wx.StaticText(self.panel, wx.ID_ANY, 'Master volume control for all output.'), 0, wx.ALL | wx.CENTER, 5)
+        vsizer.Add(hsizer, 0, wx.CENTER)
+        self.sld2 = wx.Slider(self.panel, value = self.KaraokeMgr.SongDB.Settings.Volume, minValue = 0, maxValue = 100, style = wx.SL_HORIZONTAL|wx.SL_LABELS)
+        self.sld2.Bind(wx.EVT_SLIDER, self.OnVolumeSlider) 
+        vsizer.Add(self.sld2,1,flag = wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL | wx.TOP, border = 20)
+        vsizer.Add(wx.StaticLine(self.panel,), 0, wx.ALL|wx.EXPAND, 5)
+        
+        self.panel.SetSizer(vsizer)
+        vsizer.Fit(self)
+
+        # Attach on exit handler to store settings
+        wx.EVT_CLOSE(self, self.OnClose)        
+
+        self.Centre()
+        self.Show()
+
+
+    def OnClose(self, event):
+        # Save the auto play option
+        self.KaraokeMgr.SongDB.SaveSettings()
+        
+        if self.AutoPlayCheckBox.IsChecked():
+            self.KaraokeMgr.SongDB.Settings.AutoPlayList = True
+        else:
+            self.KaraokeMgr.SongDB.Settings.AutoPlayList = False
+
+        self.Destroy()
+
+                    
+    def OnTimerSet(self, event): 
+        obj = event.GetEventObject() 
+        val = obj.GetValue() 
+        self.KaraokeMgr.SongDB.Settings.Timer = val
+
+      
+    def OnVolumeSlider(self, event): 
+        obj = event.GetEventObject() 
+        val = obj.GetValue()
+        manager.SetVolume(val / 100.0)
+        self.KaraokeMgr.SongDB.Settings.Volume = val
+
+                 
 # Main window
 class PyKaraokeWindow (wx.Frame):
     def __init__(self,parent,id,title,KaraokeMgr):
@@ -3725,8 +2812,6 @@ class PyKaraokeWindow (wx.Frame):
         fullpath = os.path.join(iconspath, "microphone.png")
         self.BigIconPath = fullpath
 
-#        self.__setupMenu()
-        
         self.setupToolBar()
         
         # Create a panel and notebook (tabs holder)
@@ -3736,12 +2821,12 @@ class PyKaraokeWindow (wx.Frame):
         # Create the tab windows
         tab1 = TabOne(nb, KaraokeMgr)
         tab2 = TabTwo(nb, KaraokeMgr)
-        tab3 = TabThree(nb, KaraokeMgr)
+#        tab3 = TabThree(nb, KaraokeMgr)
         
         # Add the windows to tabs and name them
         nb.AddPage(tab1, "Search Screen")
         nb.AddPage(tab2, "Music Screen")
-        nb.AddPage(tab3, "Monitor Screen")
+#        nb.AddPage(tab3, "Monitor Screen")
         
         # Set notebook in a sizer to create the layout
         sizer = wx.BoxSizer()
@@ -3772,55 +2857,28 @@ class PyKaraokeWindow (wx.Frame):
         
     def OnStatusTwoUpdate(self, status):
         self.SetStatusText(status, 1)
+        
+        # If nothing playing start time, so that if nothing
+        # plays for three seconds background music starts
         if status == 'Currently Not Playing A Song':
             self.Timer = wx.Timer(self)
             self.Bind(wx.EVT_TIMER, self.Update, self.Timer)
-            self.Timer.Start(3000)
+            self.Timer.Start(self.KaraokeMgr.SongDB.Settings.Timer * 1000)
         else:
+            # If something playing stop timer
             if self.Timer.IsRunning():
                 self.Timer.Stop()           
         
     def Update(self, event):
+		# Stop the timer so it only fires once, not every three seconds
+		# and request a background musis files starts playing
         self.Timer.Stop()
-        pub.sendMessage('playsomething.update', status = 'Play something')
+        if self.KaraokeMgr.SongDB.Settings.AutoPlayList == True:
+            pub.sendMessage('playsomething.update', status = 'Play something')
         
-        
-#    def __setupMenu(self):
-#        accelTable = []
-#
-#        menuBar = wx.MenuBar()
-#
-#        fileMenu = wx.Menu()
-#
-#        item = fileMenu.Append(-1, '&Configure')
-#        self.Bind(wx.EVT_MENU, self.OnConfigClicked, item)
-#        item = fileMenu.Append(-1, 'Add New Songs to &Database')
-#        self.Bind(wx.EVT_MENU, self.OnDBClicked, item)
-#        item = fileMenu.Append(-1, '&Export Song List')
-#        self.Bind(wx.EVT_MENU, self.OnExport, item)
-#        item = fileMenu.Append(-1, 'Print Song List')
-#        self.Bind(wx.EVT_MENU, self.OnPrintSongList, item)
-#
-#        fileMenu.AppendSeparator()
-#        item = fileMenu.Append(-1, '&Save database\tCtrl+S')
-#        accelTable.append((wx.ACCEL_CTRL, ord('S'), item.GetId()))
-#        self.Bind(wx.EVT_MENU, self.OnSave, item)
-#        item = fileMenu.Append(-1, 'E&xit')
-#        self.Bind(wx.EVT_MENU, self.OnClose, item)
-#
-#        menuBar.Append(fileMenu, '&File')
-#
-#        helpMenu = wx.Menu()
-#        item = helpMenu.Append(wx.ID_ABOUT, '&About')
-#        self.Bind(wx.EVT_MENU, self.OnAbout, item)
-#
-#        menuBar.Append(helpMenu, '&Help')
-#
-#        self.SetMenuBar(menuBar)
-#        self.SetAcceleratorTable(wx.AcceleratorTable(accelTable))
-
         
     def setupToolBar(self):
+		# The ten sound effects buttons
 	
         self.toolbar = self.CreateToolBar()
         
@@ -3837,6 +2895,7 @@ class PyKaraokeWindow (wx.Frame):
         
         self.toolbar.AddStretchableSpace()
         
+        # The config buttons moved from the menu bar
         self.A = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('A.png'), shortHelp="About", longHelp="Open about dialog")
         self.B = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('B.png'), shortHelp="Background Music", longHelp="Background music options")
         self.C = self.toolbar.AddLabelTool(wx.ID_ANY, '', wx.Bitmap('C.png'), shortHelp="Config", longHelp="Open config menu")
@@ -3981,6 +3040,7 @@ class PyKaraokeWindow (wx.Frame):
             abtnfAbout.AddDeveloper("Craig Rindy")
             abtnfAbout.AddDeveloper("David Rose <pykar@ddrose.com>")
             abtnfAbout.AddDeveloper("John Schneiderman <JohnMS@member.fsf.org>")
+            abtnfAbout.AddDeveloper("Ken Williams GW3TMH <ken@kensmail.uk>")
             #abtnfAbout.AddDocWriter("N/A")
             abtnfAbout.SetIcon(wx.Icon(self.BigIconPath, wx.BITMAP_TYPE_PNG, 64, 64))
             LGPLv2_Notice = "PyKaraoke is free software; you can redistribute it and/or modify it under\n the terms of the GNU Lesser General Public License as published by the\n Free Software Foundation; either version 2.1 of the License, or (at your\n option) any later version.\n \n PyKaraoke is distributed in the hope that it will be useful, but WITHOUT\n ANY WARRANTY; without even the implied warranty of MERCHANTABILITY\n or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General\n Public License for more details.\n \n You should have received a copy of the GNU Lesser General Public\n License along with this library; if not, write to the\n Free Software Foundation, Inc.\n 59 Temple Place, Suite 330\n Boston, MA  02111-1307  USA"
@@ -3993,9 +3053,7 @@ class PyKaraokeWindow (wx.Frame):
 
 		
     def OnBackGround(self, event):
-        self.Frame = BackgroundSound(self, "Background Music Settings")		
-#        wx.MessageBox("Config for background here.")
-#        return
+        self.Frame = BackgroundSound(self, "Background Music Settings", self.KaraokeMgr)		
 		
 
     def OnConfig(self, event):
@@ -4011,170 +3069,16 @@ class PyKaraokeWindow (wx.Frame):
     def OnEffects(self, event):
         self.Frame = EffectsConfig(self, self.KaraokeMgr)		
 		
-#        self.KaraokeMgr.SongDB.Settings.FX1 = "Ken Williams"
-#        self.KaraokeMgr.SongDB.SaveSettings()
-
-#        self.KaraokeMgr.SongDB.LoadSettings(errorCallback)
-#        print self.KaraokeMgr.SongDB.Settings.FX1
-
-#        wx.MessageBox("Config for effects buttons here.")
-#        return
-		
 
     def OnHelp(self, event):
 		self.Frame = HelpFrame(self, "PyKaraoke Help")
 		
-#        wx.MessageBox("Help screens here.")
-#        return
-#        html = wx.html.HtmlWindow(self)
-#        if "gtk2" in wx.PlatformInfo:
-#            html.SetStandardFonts()
-#        wx.CallAfter(html.LoadPage, "http://www.google.com")	
-				
-#    # Handle drop-down box (Folder View/Search View)
-#    def OnViewChosen(self, event):
-#        # Change between Folder View and Search View
-#        if self.ViewChoice.GetSelection() == 1:
-#            self.LeftSizer.Show(self.SearchPanel, False)
-#            self.LeftSizer.Show(self.TreePanel, True)
-#            self.LeftSizer.Layout()
-#        else:
-#            self.LeftSizer.Show(self.TreePanel, False)
-#            self.LeftSizer.Show(self.SearchPanel, True)
-#            self.LeftSizer.Layout()
-#            self.SearchPanel.SearchText.SetFocus()
-#
-#    def OnVolumeUpClicked(self, event):
-#        """ Moves the volume up. """
-#        manager.VolumeUp()
-#        self.VolumeControl.SetValue(manager.GetVolume() * 100)
-#
-#    def OnVolumeDownClicked(self, event):
-#        """ Moves the volume down. """
-#        manager.VolumeDown()
-#        self.VolumeControl.SetValue(manager.GetVolume() * 100)
-#
-#    def OnVolumeChanged(self, event):
-#        """ Resets the value to what the spin box has set."""
-#        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
-#
-#    def UpdateVolume(self):
-#        """ Synchronises the volume spinner and the PyGame music instance """
-#        manager.SetVolume(self.VolumeControl.GetValue() / 100.0)
-#
-#    def OnKamikazeClicked(self, event):
-#        """ Handles the Kamikaze button click event. """
-#        if self.KaraokeMgr.SongDB.GetDatabaseSize() == 0:
-#            setupString = "You do not have any songs in your database. Would you like to add folders now?"
-#            answer = wx.MessageBox(setupString, "Setup database now?", wx.YES_NO | wx.ICON_QUESTION)
-#            if answer == wx.YES:
-#                # Open up the database setup dialog
-#                self.Frame = DatabaseSetupWindow(self, -1, "Database Setup", self.KaraokeMgr)
-#        else:
-#            songIndex = random.randrange(0, self.KaraokeMgr.SongDB.GetDatabaseSize())
-#            song = self.KaraokeMgr.SongDB.GetSong(songIndex)
-#            # Add the performer information or the file name
-#            if self.KaraokeMgr.SongDB.Settings.UsePerformerName:
-#                dlg = PerformerPrompt.PerformerPrompt(self)
-#                if dlg.ShowModal() == wx.ID_OK:
-#                    song.DisplayFilename = dlg.getPerformer()
-#                else:
-#                    return
-#            self.KaraokeMgr.AddToPlaylist(song, self)
-#
-#    def OnPlayClicked(self, event):
-#        """ "Play Song" button clicked. """
-#
-#        if self.ViewChoice.GetSelection() == 1:
-#            songs = self.TreePanel.getSelectedSongs()
-#        else:
-#            songs = self.SearchPanel.getSelectedSongs()
-#
-#        if not songs:
-#            wx.MessageBox("No songs selected.")
-#            return
-#
-#        self.UpdateVolume()
-#        self.KaraokeMgr.PlayWithoutPlaylist(songs[0])
-#
-#    def OnPlaylistClicked(self, event):
-#        """ "Add to Playlist" button clicked. """
-#
-#        if self.ViewChoice.GetSelection() == 1:
-#            songs = self.TreePanel.getSelectedSongs()
-#        else:
-#            songs = self.SearchPanel.getSelectedSongs()
-#
-#        if not songs:
-#            wx.MessageBox("No songs selected.")
-#            return
-#
-#        for song in songs:
-#            self.UpdateVolume()
-#            self.KaraokeMgr.AddToPlaylist(song, self)
-#
-#    def OnStartPlaylistClicked(self, event):
-#        """ "Start" button clicked. """
-#        if (self.playlistButton.GetLabel() == "Play") or (self.playlistButton.GetLabel() == "Start"):
-#            self.UpdateVolume()
-#            self.PlaylistPanel.play()
-#        elif self.playlistButton.GetLabel() == "Stop":
-#            self.KaraokeMgr.Player.Close()
-#            self.playlistButton.SetLabel("Play")
-#
-#    def OnClearPlaylistClicked(self, event):
-#        """ "Clear playlist" button clicked. """
-#        self.PlaylistPanel.clear()
-#
-#    def OnDBClicked(self, event):
-#        # Open up the database setup dialog
-#        self.Frame = DatabaseSetupWindow(self, -1, "Database Setup", self.KaraokeMgr)
-#
-#    def OnConfigClicked(self, event):
-#        # Open up the settings setup dialog
-#        self.Frame = ConfigWindow(self, -1, "Configuration", self.KaraokeMgr)
-#
-#    def OnExport(self, event):
-#        self.Frame = ExportWindow(self)
-#
-#    def OnAbout(self, event):
-#        # Show the appropriate About window (we must use a special About window
-#        # if using Wx2.6 on which AboutDialogInfo() controls are not available).
-#        if HasWx26Only() == True:
-#            self.Frame = Wx26AboutWindow(self)
-#        else:
-#            abtnfAbout = wx.AboutDialogInfo()
-#            abtnfAbout.AddArtist("Kelvin Lawson <kelvinl@users.sf.net>")
-#            abtnfAbout.AddArtist("Tavmjung Bah")
-#            abtnfAbout.SetCopyright("(C) 2005-2009 Kelvin Lawson\n(C) 2009 John Schneiderman\n(C) 2006 David Rose\n(C) 2005 William Ferrell")
-#            abtnfAbout.SetDescription("A karaoke player to play your collection of karaoke songs.")
-#            abtnfAbout.AddDeveloper("Will Ferrell <willfe@gmail.com>")
-#            abtnfAbout.AddDeveloper("Andrei Gavrila")
-#            abtnfAbout.AddDeveloper("Kelvin Lawson <kelvinl@users.sf.net>")
-#            abtnfAbout.AddDeveloper("Craig Rindy")
-#            abtnfAbout.AddDeveloper("David Rose <pykar@ddrose.com>")
-#            abtnfAbout.AddDeveloper("John Schneiderman <JohnMS@member.fsf.org>")
-#            #abtnfAbout.AddDocWriter("N/A")
-#            abtnfAbout.SetIcon(wx.Icon(self.BigIconPath, wx.BITMAP_TYPE_PNG, 64, 64))
-#            LGPLv2_Notice = "PyKaraoke is free software; you can redistribute it and/or modify it under\n the terms of the GNU Lesser General Public License as published by the\n Free Software Foundation; either version 2.1 of the License, or (at your\n option) any later version.\n \n PyKaraoke is distributed in the hope that it will be useful, but WITHOUT\n ANY WARRANTY; without even the implied warranty of MERCHANTABILITY\n or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General\n Public License for more details.\n \n You should have received a copy of the GNU Lesser General Public\n License along with this library; if not, write to the\n Free Software Foundation, Inc.\n 59 Temple Place, Suite 330\n Boston, MA  02111-1307  USA"
-#            abtnfAbout.SetLicence(LGPLv2_Notice)
-#            abtnfAbout.SetName("PyKaraoke")
-#            #abtnfAbout.AddTranslator("N/A")
-#            abtnfAbout.SetVersion(pykversion.PYKARAOKE_VERSION_STRING)
-#            abtnfAbout.SetWebSite("http://www.kibosh.org/pykaraoke/")
-#            wx.AboutBox(abtnfAbout)
-#
-#    def OnPrintSongList(self, evt):
-#        PrintSongListWindow(self)
-#
-#    def OnSave(self, event):
-#        self.KaraokeMgr.SongDB.SaveDatabase()
-#        self.KaraokeMgr.SongDB.SaveSettings()
 
     def OnClose(self, event):
         """ Handle closing pykaraoke (need to delete any temporary files on close) """
 
         # Save the current window size
+        # More work needed here, as window size creeps up with each save
         self.KaraokeMgr.SongDB.Settings.WindowSize = (self.GetSize().GetWidth(), self.GetSize().GetHeight())
         self.KaraokeMgr.SongDB.SaveSettings()
         
@@ -4341,34 +3245,10 @@ class PyKaraokeManager:
         pub.sendMessage('statusbar2.update', status = 'Currently Not Playing A Song')
         pub.sendMessage('gauge.update', status = 0)
         
-                    
-#        # Only continue to play if auto play is enabled.
-#        if self.SongDB.Settings.AutoPlayList:
-#            next_index = self.PlayingIndex + 1
-#            # If a direct play (not from playlist) was requested, start playing
-#            # it now that the previous one has closed. Otherwise check the
-#            # playlist to see if there is another one in there to play
-#            if self.DirectPlaySongStruct:
-#                song_struct = self.DirectPlaySongStruct
-#                self.DirectPlaySongStruct = None
-#                self.StartPlayer(song_struct)
-#                # Don't continue with the playlist next
-#                self.PlayingIndex = -2
-#                # Play the next song in the list, if there is one (and if the
-#                # last song wasn't a direct play)
-#            elif (self.PlayingIndex != -2) and (next_index <= (self.Frame.PlaylistPanel.GetItemCount() - 1)):
-#                song_struct = self.Frame.PlaylistPanel.GetSongStruct(next_index)
-#                self.StartPlayer(song_struct)
-#                self.PlayingIndex = next_index
-#                # Show the song as selected in the playlist
-#                self.Frame.PlaylistPanel.SetItemSelected(next_index)
-#            else:
-#                self.Player = None
-#        else:
         self.Player = None
-#            self.Frame.playlistButton.SetLabel("Play")
         # Delete any temporary files that may have been unzipped
         self.SongDB.CleanupTempFiles()
+
 
     # The callback is in the player thread context, so need to post an event
     # for the GUI thread, actually handled by ErrorPopupEventHandler()
@@ -4385,9 +3265,11 @@ class PyKaraokeManager:
             self.Player = None
         self.SongDB.CleanupTempFiles()
 
+
     # Handle the error popup event, runs in the GUI thread.
     def ErrorPopupEventHandler(self, event):
         ErrorPopup(event.data)
+
 
     # Takes a SongStruct, which contains any info on ZIPs etc
     def StartPlayer(self, song_struct):
@@ -4396,6 +3278,9 @@ class PyKaraokeManager:
             self.SongDB, self.ErrorPopupCallback, self.SongFinishedCallback)
         if self.Player == None:
             return
+            
+        # Set volume    
+        manager.SetVolume(self.SongDB.Settings.Volume / 100.0)
 
         # Start playing
         self.Player.Play()
@@ -4406,8 +3291,6 @@ class PyKaraokeManager:
         else:
 			pub.sendMessage('gauge.start', status = 100)    
 
-        if not self.SongDB.Settings.AutoPlayList:
-            self.Frame.playlistButton.SetLabel("Stop")
 
     def OnIdle(self, event):
         manager.Poll()
@@ -4428,7 +3311,6 @@ class PyKaraokeManager:
                 else:
 					# Got playing time, display it
                     pub.sendMessage('gauge.update', status = timeLeft)					
-#                    pub.sendMessage('gauge.update', status = timeLength - timeLeft)
                     minutesRemaining = timeLeft / 60
                     secondsRemaining = timeLeft % 60
                     pub.sendMessage('statusbar2.update', status = '[%02d:%02d] %s - %s' % (minutesRemaining, secondsRemaining, self.Player.Song.Artist, self.Player.Song.Title))
