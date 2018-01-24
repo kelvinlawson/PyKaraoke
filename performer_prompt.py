@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-# Pykaraoke performer prompt
+# Python karaoke performer prompt
 
 #******************************************************************************
 #**** Copyright (C) 2018  Ken Williams GW3TMH (ken@kensmail.uk)            ****
 #**** Copyright (C) 2010  Kelvin Lawson (kelvinl@users.sourceforge.net)    ****
-#**** Copyright (C) 2010  PyKaraoke Development Team                       ****
+#**** Copyright (C) 2010  Python Karaoke Development Team                  ****
 #****                                                                      ****
 #**** This library is free software; you can redistribute it and/or        ****
 #**** modify it under the terms of the GNU Lesser General Public           ****

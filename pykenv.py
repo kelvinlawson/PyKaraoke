@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-# Pykaraoke enviroment
+# Python karaoke enviroment
 
 #******************************************************************************
 #**** Copyright (C) 2018  Ken Williams GW3TMH (ken@kensmail.uk)            ****
 #**** Copyright (C) 2010  Kelvin Lawson (kelvinl@users.sourceforge.net)    ****
-#**** Copyright (C) 2010  PyKaraoke Development Team                       ****
+#**** Copyright (C) 2010  Python Karaoke Development Team                  ****
 #****                                                                      ****
 #**** This library is free software; you can redistribute it and/or        ****
 #**** modify it under the terms of the GNU Lesser General Public           ****
@@ -32,9 +32,7 @@ import os
 # Try to guess which environment we're running in.
 if os.name == "posix":
     (uname, host, release, version, machine) = os.uname()
-    if host == "gp2x":
-        env = ENV_GP2X
-    elif (uname.lower()[:6] == "darwin"):
+    if (uname.lower()[:6] == "darwin"):
         env = ENV_OSX
     else:
         env = ENV_POSIX

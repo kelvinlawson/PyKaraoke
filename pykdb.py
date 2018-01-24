@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-# Pykaraoke data base
+# Python karaoke data base
 
 #******************************************************************************
 #**** Copyright (C) 2018  Ken Williams GW3TMH (ken@kensmail.uk)            ****
 #**** Copyright (C) 2010  Kelvin Lawson (kelvinl@users.sourceforge.net)    ****
-#**** Copyright (C) 2010  PyKaraoke Development Team                       ****
+#**** Copyright (C) 2010  Python Karaoke Development Team                  ****
 #****                                                                      ****
 #**** This library is free software; you can redistribute it and/or        ****
 #**** modify it under the terms of the GNU Lesser General Public           ****
@@ -24,15 +24,16 @@
 #**** Boston, MA  02111-1307  USA                                          ****
 #******************************************************************************
 
-""" This module provides support for the PyKaraoke song database, as
+""" This module provides support for the Python Karaoke song database, as
 well as the user's settings file. """
 
-#import pygame
-#import pykconstants
 from pykconstants import *
 from pykenv import env
-#import pykar, pycdg, pympg
-import os, cPickle, zipfile, codecs, sys, time
+import os
+import cPickle
+import zipfile
+import sys
+import time
 import types
 from cStringIO import StringIO
 try:
@@ -41,7 +42,7 @@ except ImportError:
     from md5 import md5
     
 import pyvlc
-import time
+
 
 # The amount of time to wait, in milliseconds, before yielding to the
 # app for windowing updates during a long update process.
@@ -52,7 +53,7 @@ YIELD_INTERVAL = 1000
 MAX_ZIP_FILES = 10
 
 # Increment this version number whenever the settings version changes
-# (which may not necessarily change with each PyKaraoke release).
+# (which may not necessarily change with each Python Karaoke release).
 # This will force users to re-enter their configuration information.
 SETTINGS_VERSION = 6
 
@@ -71,13 +72,12 @@ class AppYielder:
     it. """
 
     def __init__(self):
-#        self.lastYield = pygame.time.get_ticks()
-        self.lastYield = int(time.clock()*1000)
+        self.lastYield = int(time.time()*1000)
 
     def ConsiderYield(self):
-#        now = pygame.time.get_ticks()
-        now = int(time.clock()*1000)
-        if now - self.lastYield >= YIELD_INTERVAL:
+        now = int(time.time()*1000)
+        
+        if (now - self.lastYield) > YIELD_INTERVAL:
             self.Yield()
             self.lastYield = now
 
@@ -179,7 +179,6 @@ class SongStruct:
     a physical file on disk, or to a file within a zip file. """
 
     # Type codes.
-#    T_KAR = 0
     T_CDG = 1
     T_MPG = 2
 
@@ -241,12 +240,6 @@ class SongStruct:
         self.Type = None
         ext = os.path.splitext(self.DisplayFilename)[1].lower()
         
-#        if ext in settings.KarExtensions:
-#            self.Type = self.T_KAR
-            
-#        elif ext in settings.CdgExtensions:
-#            self.Type = self.T_CDG
-            
         if ext == '.cdg':
             self.Type = self.T_CDG    
             
@@ -254,14 +247,6 @@ class SongStruct:
             self.Type = self.T_MPG
             self.MpgType = 'mpg'    
             
-#        elif ext in settings.MpgExtensions:
-#            self.Type = self.T_MPG
-#            
-#            if ext == '.mp4' or ext == '.mpg' or ext == '.mpeg':
-#                self.MpgType = 'mpg'
-#            else:
-#                self.MpgType = ext[1:]
-
 
     def ParseTitle(self, filepath, settings):
         """ Parses the file path and returns the title of the song. If the filepath cannot be parsed a KeyError exception is thrown. If the settings contains a file naming scheme that we do not support a KeyError exception is thrown."""
@@ -395,25 +380,6 @@ class SongStruct:
         have already been called with the error message). """
 
         settings = songDb.Settings
-#        constructor = None
-
-#        if self.Type == self.T_CDG:
-#            constructor = pycdg.cdgPlayer
-#        elif self.Type == self.T_KAR:
-#            constructor = pykar.midPlayer
-#        elif self.Type == self.T_MPG:
-#            if self.MpgType == 'mpg' and settings.MpgNative and pympg.movie:
-#                # Mpg files can be played internally.
-#                constructor = pympg.mpgPlayer
-#            else:
-#                # Other kinds of movies require an external player.
-#                constructor = pympg.externalPlayer
-#        else:
-#            ext = os.path.splitext(self.DisplayFilename)[1]
-#            errorNotifyCallback("Unsupported file format " + ext)
-#            return None
-
-##### Patch to force vlc player #####
         constructor = pyvlc.vlcPlayer
 
         # Try to open the song file.
@@ -509,55 +475,6 @@ class SongStruct:
 
         # Now we've found all the matching files.
         return songDatas
-
-
-#    def getTextColour(self, selected):
-#        """ Returns a suitable colour to use when rendering the text
-#        of this song line in the pykaraoke_mini song index. """
-#
-#        if selected:
-#            fg = (255, 255, 255)
-#
-#        else:
-#            # Determine the color of the text.
-#            fg = (180, 180, 180)
-#            if self.Type == self.T_KAR:
-#                # Midi file: color it red.
-#                fg = (180, 72, 72)
-#
-#            elif self.Type == self.T_CDG:
-#                # CDG+MP3: color it blue.
-#                fg = (72, 72, 180)
-#
-#            elif self.Type == self.T_MPG:
-#                # MPEG file: color it yellow.
-#                fg = (180, 180, 72)
-#
-#        return fg
-
-
-#    def getBackgroundColour(self, selected):
-#        """ Returns a suitable colour to use when rendering the
-#        background of this song line in the pykaraoke_mini song
-#        index. """
-#
-#        if not selected:
-#            bg = (0, 0, 0)
-#
-#        else:
-#            if self.Type == self.T_KAR:
-#                # Midi file: color it red.
-#                bg = (120, 0, 0)
-#
-#            elif self.Type == self.T_CDG:
-#                # CDG+MP3: color it blue.
-#                bg = (0, 0, 120)
-#
-#            elif self.Type == self.T_MPG:
-#                # MPEG file: color it yellow.
-#                bg = (120, 120, 0)
-#
-#        return bg
 
 
     def getDisplayFilenames(self):
@@ -803,41 +720,6 @@ class TitleStruct:
             catalogFile.write(line + '\n')
 
 
-#class FontData:
-#    """ This stores the font description selected by the user.
-#    Hopefully it is enough information to be used both in wx and in
-#    pygame to reference a unique font on the system. """
-#
-#
-#    def __init__(self, name = None, size = None, bold = False, italic = False):
-#        # name may be either a system font name (if size != None) or a
-#        # filename (if size == None).
-#        self.name = name
-#        self.size = size
-#        self.bold = bold
-#        self.italic = italic
-#
-#
-#    def __repr__(self):
-#        if not self.size:
-#            return "FontData(%s)" % (repr(self.name))
-#        else:
-#            return "FontData(%s, %s, %s, %s)" % (
-#                repr(self.name), repr(self.size), repr(self.bold), repr(self.italic))
-#
-#
-#    def getDescription(self):
-#        desc = self.name
-#        if self.size:
-#            desc += ',%spt' % (self.size)
-#        if self.bold:
-#            desc += ',bold'
-#        if self.italic:
-#            desc += ',italic'
-#
-#        return desc
-
-
 # SettingsStruct used as storage only for settings. The instance
 # can be pickled to save all user's settings.
 class SettingsStruct:
@@ -851,28 +733,6 @@ class SettingsStruct:
         'iso-8859-5',
         'iso-8859-7',
         'utf-8',
-        ]
-
-    # This is the set of CDG zoom modes.
-    Zoom = [
-        'quick', 'int', 'full', 'soft', 'none',
-        ]
-    ZoomDesc = {
-        'quick' : 'a pixelly scale, maintaining aspect ratio',
-        'int' : 'like quick, reducing artifacts a little',
-        'full' : 'like quick, but stretches to fill the entire window',
-        'soft' : 'a high-quality scale, but may be slow on some hardware',
-        'none' : 'keep the display in its original size',
-        }
-
-    # Some audio cards seem to support only a limited set of sample
-    # rates.  Here are the suggested offerings.
-    SampleRates = [
-        48000,
-        44100,
-        22050,
-        11025,
-        5512,
         ]
 
     # A list of possible file name deriving combinations.
@@ -908,7 +768,6 @@ class SettingsStruct:
         
         self.FolderList = []
         self.CdgExtensions = [ '.cdg' ]
-        self.KarExtensions = [ '.kar', '.mid' ]
         self.MpgExtensions = [ '.mp4', '.mpg', '.mpeg', '.avi' ]
         self.IgnoredExtensions = []
         self.LookInsideZips = True
@@ -921,87 +780,29 @@ class SettingsStruct:
             self.FilesystemCoding = 'iso-8859-1'
         self.ZipfileCoding = 'cp1252'
 
-        self.WindowSize = (640, 480) # Size of the window for PyKaraoke
+        self.WindowSize = (640, 480) # Size of the window for Python Karaoke
         self.FullScreen = False # Determines if the karaoke player should be full screen
         self.NoFrame = False # Determies if the karaoke player should have a window frame.
 
         # SDL specific parameters; some settings may work better on
         # certain hardware than others
-        self.DoubleBuf = True
-        self.HardwareSurface = True
         
-        self.PlayerSize = (640, 480) # Size of the karaoke player
+        self.PlayerSize = (640, 400) # Size of the karaoke player
         self.PlayerPosition = (0,0) # Initial position of the karaoke player
         
-        self.SplitVertically = True
         self.AutoPlayList = True # Enables or disables the auto play on the play-list
         self.DoubleClickPlayList = True # Enables or disables the double click for playing from the play-list
         self.ClearFromPlayList = True # Enables or disables clearing the playlist with a right click on the play list
-        self.Kamikaze = False # Enables or disables the kamikaze button
-        self.UsePerformerName = False # Enables or disables the prompting for a performers name.
+        self.UsePerformerName = True # Enables or disables the prompting for a performers name.
         self.PlayFromSearchList = True # Enables or disables the playing of a song from the search list
-        self.DisplayArtistTitleCols = False # Enables or disables display of artist/title columns
+        self.DisplayArtistTitleCols = True # Enables or disables display of artist/title columns
 
-        self.SampleRate = 44100
-        self.NumChannels = 2
-        self.BufferMs = 50
         self.UseMp3Settings = True
 
-        # This value is a time in milliseconds that will be used to
-        # shift the time of the lyrics display relative to the video.
-        # It is adjusted by the user pressing the left and right
-        # arrows during singing, and is persistent during a session.
-        # Positive values make the lyrics anticipate the music,
-        # negative values delay them.
-        self.SyncDelayMs = 0
-
-#        # KAR/MID options
-#        self.KarEncoding = 'cp1252'  # Default text encoding in karaoke files
-#        self.KarFont = FontData("DejaVuSans.ttf")
-#        self.KarBackgroundColour = (0, 0, 0)
-#        self.KarReadyColour = (255,50,50)
-#        self.KarSweepColour = (255,255,255)
-#        self.KarInfoColour = (0, 0, 200)
-#        self.KarTitleColour = (100, 100, 255)
-#        self.MIDISampleRate = 44100
-
         # CDG options
-        self.CdgZoom = 'int'
-        self.CdgUseC = True
-        self.CdgDeriveSongInformation = False # Determines if we should parse file names for song information
-        self.CdgFileNameType = -1 # The style index we are using for the file name parsing
+        self.CdgDeriveSongInformation = True # Determines if we should parse file names for song information
+        self.CdgFileNameType = 3 # The style index we are using for the file name parsing
         self.ExcludeNonMatchingFilenames = False # Exclude songs from database if can't derive song info
-
-        # MPEG options
-        self.MpgNative = True
-        self.MpgExternalThreaded = True
-        self.MpgExternal = 'mplayer -fs "%(file)s"'
-
-#        if env == ENV_WINDOWS:
-#            self.MpgExternal = '"C:\\Program Files\\Windows Media Player\\wmplayer.exe" "%(file)s" /play /close /fullscreen'
-#        elif env == ENV_GP2X:
-#            self.FullScreen = True
-#            self.PlayerSize = (320, 240)
-#            self.CdgZoom = 'none'
-#            # Reduce the default sample rate on the GP2x to save time.
-#            self.MIDISampleRate = 11025
-#            self.MpgExternal = './mplayer_cmdline "%(file)s"'
-#            self.MpgExternalThreaded = False
-#            self.BufferMs = 250
-#
-#            # Define the CPU speed for various activities.  We're
-#            # conservative here and avoid overclocking by default.
-#            # The user can push these values higher if he knows his
-#            # GP2X can handle it.
-#            self.CPUSpeed_startup = 240
-#            self.CPUSpeed_wait = 33
-#            self.CPUSpeed_menu_idle = 33
-#            self.CPUSpeed_menu_slow = 100
-#            self.CPUSpeed_menu_fast = 240
-#            self.CPUSpeed_load = 240
-#            self.CPUSpeed_cdg = 200
-#            self.CPUSpeed_kar = 240
-#            self.CPUSpeed_mpg = 200
 
 
 # This is a trivial class used to wrap the song database with a
@@ -1066,12 +867,6 @@ class SongDB:
         if dir:
             return dir
 
-#        if env == ENV_GP2X:
-#            # On the GP2X, just save db files in the root directory.
-#            # Makes it easier to find them, and avoids directory
-#            # clutter.
-#            return '.'
-
         # Without PYKARAOKE_DIR, use ~/.pykaraoke.  Try to figure that
         # out.
         homeDir = self.getHomeDirectory()
@@ -1107,8 +902,7 @@ class SongDB:
         """ Returns the user's home directory, if we can figure that
         out. """
 
-#        if env != ENV_GP2X:
-            # First attempt: ask wx, if it's available.
+        # First attempt: ask wx, if it's available.
         try:
             import wx
             return wx.GetHomeDir()
@@ -1250,7 +1044,7 @@ class SongDB:
                 if loadsettings.Version == SETTINGS_VERSION:
                     self.Settings = loadsettings
                 else:
-                    message = "New version of PyKaraoke, clearing settings"
+                    message = "New version of Python Karaoke, clearing settings"
 
             if message:
                 if errorCallback:
@@ -1286,7 +1080,7 @@ class SongDB:
                 self.GotArtists = loaddb.GotArtists
             else:
                 if errorCallback:
-                   errorCallback("New version of PyKaraoke, clearing database")
+                   errorCallback("New version of Python Karaoke, clearing database")
 
         self.databaseDirty = False
 
@@ -1577,13 +1371,6 @@ class SongDB:
                 self.TitlesFiles.append(TitleStruct(full_path))
             elif self.IsExtensionValid(ext):
                 try:
-#                    # temp for debug
-#                    if ext == ".mp4":
-#                        print "path is ", full_path
-#                        test = SongStruct(full_path, self.Settings, DatabaseAdd = True)
-#                        print "Title is ", test.Title
-#                        print "Artist is ", test.Artist
-#                    else:    
                     self.addSong(SongStruct(full_path, self.Settings, DatabaseAdd = True))
                 except KeyError:
                     print "Excluding filename with unexpected format: %s " % repr(os.path.basename(full_path))
@@ -1714,16 +1501,10 @@ class SongDB:
         if ext == ".mp4":
             return True 
         
-#        if ext in self.Settings.IgnoredExtensions:
-#            return False
-#        if ext in self.Settings.KarExtensions or \
-#           ext in self.Settings.CdgExtensions or \
-#           ext in self.Settings.MpgExtensions:
-#            return True
         return False
 
 
-    # Create a directory for use by PyKaraoke for temporary zip files
+    # Create a directory for use by Python Karaoke for temporary zip files
     # and for saving the song database and settings.
     # This will be under the Wx idea of the home directory.
     def CreateTempDir (self):

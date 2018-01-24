@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-# Pykaraoke constants
+# Python karaoke constants
 
 #******************************************************************************
 #**** Copyright (C) 2018  Ken Williams GW3TMH (ken@kensmail.uk)            ****
 #**** Copyright (C) 2010  Kelvin Lawson (kelvinl@users.sourceforge.net)    ****
-#**** Copyright (C) 2010  PyKaraoke Development Team                       ****
+#**** Copyright (C) 2010  Python Karaoke Development Team                  ****
 #****                                                                      ****
 #**** This library is free software; you can redistribute it and/or        ****
 #**** modify it under the terms of the GNU Lesser General Public           ****
@@ -28,46 +28,19 @@
 this package. """
 
 
-PROGRAM_NAME = "PyKaraoke"
+PROGRAM_NAME = "Python Karaoke "
 PROGRAM_VERSION = "2018"
 
 # Environment
 ENV_WINDOWS = 1
 ENV_POSIX = 2
 ENV_OSX = 3
-#ENV_GP2X = 4
 ENV_UNKNOWN = 5
 
-## States
-#STATE_INIT          = 0
-#STATE_PLAYING       = 1
-#STATE_PAUSED        = 2
-#STATE_NOT_PLAYING   = 3
-#STATE_CLOSING       = 4
-#STATE_CLOSED        = 5
-#STATE_CAPTURING     = 6
+PLAY_COL_TITLE =      "Title"
+PLAY_COL_ARTIST =     "Artist"
+PLAY_COL_FILENAME =   "Filename"
+PLAY_COL_PERFORMER =  "Singer"
 
-## GP2X joystick button mappings
-#GP2X_BUTTON_UP            = (0)
-#GP2X_BUTTON_DOWN          = (4)
-#GP2X_BUTTON_LEFT          = (2)
-#GP2X_BUTTON_RIGHT         = (6)
-#GP2X_BUTTON_UPLEFT        = (1)
-#GP2X_BUTTON_UPRIGHT       = (7)
-#GP2X_BUTTON_DOWNLEFT      = (3)
-#GP2X_BUTTON_DOWNRIGHT     = (5)
-#GP2X_BUTTON_CLICK         = (18)
-#GP2X_BUTTON_A             = (12)
-#GP2X_BUTTON_B             = (13)
-#GP2X_BUTTON_X             = (14)
-#GP2X_BUTTON_Y             = (15)
-#GP2X_BUTTON_L             = (10)
-#GP2X_BUTTON_R             = (11)
-#GP2X_BUTTON_START         = (8) 
-#GP2X_BUTTON_SELECT        = (9)
-#GP2X_BUTTON_VOLUP         = (16)
-#GP2X_BUTTON_VOLDOWN       = (17)
-
-## Left and top margins
-#Y_BORDER = 20
-#X_BORDER = 20
+LIST_BOX_COLOUR_1 = '#ffffff'
+LIST_BOX_COLOUR_2 = '#eee8aa'

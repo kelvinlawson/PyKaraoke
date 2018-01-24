@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-# Pykaraoke VLC
+# Python karaoke VLC
 
 #******************************************************************************
 #**** Copyright (C) 2018  Ken Williams GW3TMH (ken@kensmail.uk)            ****
 #**** Copyright (C) 2010  Kelvin Lawson (kelvinl@users.sourceforge.net)    ****
-#**** Copyright (C) 2010  PyKaraoke Development Team                       ****
+#**** Copyright (C) 2010  Python Karaoke Development Team                  ****
 #****                                                                      ****
 #**** This library is free software; you can redistribute it and/or        ****
 #**** modify it under the terms of the GNU Lesser General Public           ****
@@ -43,12 +43,24 @@ class vlcPlayer(wx.Frame):
             default = wx.DEFAULT_FRAME_STYLE
             
         if env == ENV_POSIX:    
-            wx.Frame.__init__(self, None, -1, title = "PyKaraoke " + PROGRAM_VERSION, pos = self.Settings.PlayerPosition, size = self.Settings.PlayerSize, style = default)
+            wx.Frame.__init__(self, None, -1, title = PROGRAM_NAME + PROGRAM_VERSION, pos = self.Settings.PlayerPosition, size = self.Settings.PlayerSize, style = default)
         else:
-            wx.Frame.__init__(self, None, -1, title = "PyKaraoke " + PROGRAM_VERSION, size = self.Settings.PlayerSize, style = default)    
+            wx.Frame.__init__(self, None, -1, title = PROGRAM_NAME + PROGRAM_VERSION, size = self.Settings.PlayerSize, style = default)    
 
         if self.Settings.FullScreen == True:
             self.ShowFullScreen(True)
+
+        # Create the windows icons. Find the correct icons path. If
+        # fully installed on Linux this will be
+        # sys.prefix/share/pykaraoke/icons. Otherwise look for it
+        # in the current directory.
+        if (os.path.isfile("icons/pykaraoke.xpm")):
+            iconspath = "icons"
+        else:
+            iconspath = os.path.join(sys.prefix, "share/pykaraoke/icons")
+        fullpath = os.path.join(iconspath, "pykaraoke.xpm")
+        icon1 = wx.Icon(fullpath, wx.BITMAP_TYPE_XPM)
+        self.SetIcon(icon1)            
                 
         # The video panel
         self.videopanel = wx.Panel(self, -1)
@@ -160,8 +172,6 @@ class vlcPlayer(wx.Frame):
 
 
     # Get how many seconds the song has played for.
-    # Pykaraoke expects a millisecond value here
-    # so multiply by 1000
     def GetPos(self):
         pos = self.vlcplayer.get_time()
         return pos / 1000
@@ -213,7 +223,7 @@ class Ticker(wx.Control):
             id=-1, 
             text=wx.EmptyString,        #text in the ticker
             fgcolor = wx.RED,           #text/foreground color
-            bgcolor = '#c0c0c0',         #background color
+            bgcolor = '#c0c0c0',        #background color
             start=True,                 #if True, the ticker starts immediately
             ppf=1,                      #pixels per frame
             fps=25,                     #frames per second
@@ -323,6 +333,7 @@ class Ticker(wx.Control):
         dc.SetTextForeground(self.GetForegroundColour())
         font = self.GetFont()
         font.SetPixelSize((0,self.GetSize().GetHeight()))
+        font.MakeBold()
         dc.SetFont(font)
         self.UpdateExtent(dc)
         if self._dir == "ltr":
