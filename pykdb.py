@@ -1,12 +1,16 @@
+#!/usr/bin/env python
+
+# Python karaoke data base
+
 #******************************************************************************
-#****                                                                      ****
+#**** Copyright (C) 2018  Ken Williams GW3TMH (ken@kensmail.uk)            ****
 #**** Copyright (C) 2010  Kelvin Lawson (kelvinl@users.sourceforge.net)    ****
-#**** Copyright (C) 2010  PyKaraoke Development Team                       ****
+#**** Copyright (C) 2010  Python Karaoke Development Team                  ****
 #****                                                                      ****
 #**** This library is free software; you can redistribute it and/or        ****
 #**** modify it under the terms of the GNU Lesser General Public           ****
 #**** License as published by the Free Software Foundation; either         ****
-#**** version 2.1 of the License, or (at your option) any later version.   ****
+#**** version 3 of the License, or (at your option) any later version.     ****
 #****                                                                      ****
 #**** This library is distributed in the hope that it will be useful,      ****
 #**** but WITHOUT ANY WARRANTY; without even the implied warranty of       ****
@@ -20,20 +24,25 @@
 #**** Boston, MA  02111-1307  USA                                          ****
 #******************************************************************************
 
-""" This module provides support for the PyKaraoke song database, as
+""" This module provides support for the Python Karaoke song database, as
 well as the user's settings file. """
 
-import pygame
 from pykconstants import *
 from pykenv import env
-import pykar, pycdg, pympg
-import os, cPickle, zipfile, codecs, sys, time
+import os
+import cPickle
+import zipfile
+import sys
+import time
 import types
 from cStringIO import StringIO
 try:
     from hashlib import md5
 except ImportError:
     from md5 import md5
+    
+import pyvlc
+
 
 # The amount of time to wait, in milliseconds, before yielding to the
 # app for windowing updates during a long update process.
@@ -44,7 +53,7 @@ YIELD_INTERVAL = 1000
 MAX_ZIP_FILES = 10
 
 # Increment this version number whenever the settings version changes
-# (which may not necessarily change with each PyKaraoke release).
+# (which may not necessarily change with each Python Karaoke release).
 # This will force users to re-enter their configuration information.
 SETTINGS_VERSION = 6
 
@@ -63,11 +72,12 @@ class AppYielder:
     it. """
 
     def __init__(self):
-        self.lastYield = pygame.time.get_ticks()
+        self.lastYield = int(time.time()*1000)
 
     def ConsiderYield(self):
-        now = pygame.time.get_ticks()
-        if now - self.lastYield >= YIELD_INTERVAL:
+        now = int(time.time()*1000)
+        
+        if (now - self.lastYield) > YIELD_INTERVAL:
             self.Yield()
             self.lastYield = now
 
@@ -75,6 +85,7 @@ class AppYielder:
         """ Override this method to actually yield control to the
         windowing system. """
         pass
+
 
 class BusyCancelDialog:
 
@@ -95,6 +106,7 @@ class BusyCancelDialog:
     def Destroy(self):
         pass
 
+
 class SongData:
     """This class is returned by SongStruct.GetSongDatas(), below.  It
     represents either a song file that exists on disk (and must still
@@ -113,6 +125,7 @@ class SongData:
         # file, and data contains its contents.
         self.trueFile = (data == None)
 
+
     def GetData(self):
         """Returns the actual data of the file.  If the file has not
         yet been read, this will read it and return the data."""
@@ -125,6 +138,7 @@ class SongData:
         self.data = open(self.filename, 'rb').read()
         return self.data
 
+
     def GetFilepath(self):
         """Returns a full pathname to the file.  If the file does not
         exist on disk, this will write it to a temporary file and
@@ -134,6 +148,7 @@ class SongData:
             # The file exists on disk already; just return its
             # pathname.
             return self.filename
+
 
         if not self.tempFilename:
             # The file does not exist on disk already; we have to write it
@@ -157,13 +172,13 @@ class SongData:
 # no facility to receive a key parameter, like sort does.
 fileSortKey = None
 
+
 class SongStruct:
     """ This corresponds to a single song file entry, e.g. a .kar
     file, or a .mp3/.cdg filename pair.  The file might correspond to
     a physical file on disk, or to a file within a zip file. """
 
     # Type codes.
-    T_KAR = 0
     T_CDG = 1
     T_MPG = 2
 
@@ -184,7 +199,7 @@ class SongStruct:
                 self.Title = self.ParseTitle(Filepath, settings)    # Title for display in playlist
                 self.Artist = self.ParseArtist(Filepath, settings)  # Artist for display
                 self.Disc = self.ParseDisc(Filepath, settings)      # Disc for display
-                self.Track = self.ParseTrack(Filepath, settings)     # Track for display
+                self.Track = self.ParseTrack(Filepath, settings)    # Track for display
             except:
                 # Filename did not match requested scheme, set the title to the filepath
                 # so that the structure is still created, but without any additional info
@@ -224,16 +239,14 @@ class SongStruct:
         # Check the file type based on extension.
         self.Type = None
         ext = os.path.splitext(self.DisplayFilename)[1].lower()
-        if ext in settings.KarExtensions:
-            self.Type = self.T_KAR
-        elif ext in settings.CdgExtensions:
-            self.Type = self.T_CDG
-        elif ext in settings.MpgExtensions:
+        
+        if ext == '.cdg':
+            self.Type = self.T_CDG    
+            
+        if ext == '.mp4':
             self.Type = self.T_MPG
-            if ext == '.mpg' or ext == '.mpeg':
-                self.MpgType = 'mpg'
-            else:
-                self.MpgType = ext[1:]
+            self.MpgType = 'mpg'    
+            
 
     def ParseTitle(self, filepath, settings):
         """ Parses the file path and returns the title of the song. If the filepath cannot be parsed a KeyError exception is thrown. If the settings contains a file naming scheme that we do not support a KeyError exception is thrown."""
@@ -273,6 +286,7 @@ class SongStruct:
         #print "Title parsed: %s" % title
         return title
 
+
     def ParseArtist(self, filepath, settings):
         """ Parses the filepath and returns the artist of the song. """
         artist = ''
@@ -293,6 +307,7 @@ class SongStruct:
             artist = artist.strip(" ")
         #print "Artist parsed: %s" % artist
         return artist
+
 
     def ParseDisc(self, filepath, settings):
         """ Parses the filepath and returns the disc name of the song. """
@@ -316,6 +331,7 @@ class SongStruct:
         #print "Disc parsed: %s" % disc
         return disc
 
+
     def ParseTrack(self, filepath, settings):
         """ Parses the file path and returns the track for the song. """
         track = ''
@@ -336,6 +352,7 @@ class SongStruct:
         #print "Track parsed: %s" % track
         return track
 
+
     def MakeSortKey(self, str):
         """ Returns a suitable key to use for sorting, by lowercasing
         and removing articles from the indicated string. """
@@ -355,6 +372,7 @@ class SongStruct:
                 
         return str
 
+
     def MakePlayer(self, songDb, errorNotifyCallback, doneCallback):
         """Creates and returns a player of the appropriate type to
         play this file, if possible; or returns None if the file
@@ -362,23 +380,7 @@ class SongStruct:
         have already been called with the error message). """
 
         settings = songDb.Settings
-        constructor = None
-
-        if self.Type == self.T_CDG:
-            constructor = pycdg.cdgPlayer
-        elif self.Type == self.T_KAR:
-            constructor = pykar.midPlayer
-        elif self.Type == self.T_MPG:
-            if self.MpgType == 'mpg' and settings.MpgNative and pympg.movie:
-                # Mpg files can be played internally.
-                constructor = pympg.mpgPlayer
-            else:
-                # Other kinds of movies require an external player.
-                constructor = pympg.externalPlayer
-        else:
-            ext = os.path.splitext(self.DisplayFilename)[1]
-            errorNotifyCallback("Unsupported file format " + ext)
-            return None
+        constructor = pyvlc.vlcPlayer
 
         # Try to open the song file.
         try:
@@ -389,6 +391,7 @@ class SongStruct:
             return None
 
         return player
+
 
     def GetSongDatas(self):
         """Returns a list of SongData objects; see SongData.
@@ -473,53 +476,6 @@ class SongStruct:
         # Now we've found all the matching files.
         return songDatas
 
-    def getTextColour(self, selected):
-        """ Returns a suitable colour to use when rendering the text
-        of this song line in the pykaraoke_mini song index. """
-
-        if selected:
-            fg = (255, 255, 255)
-
-        else:
-            # Determine the color of the text.
-            fg = (180, 180, 180)
-            if self.Type == self.T_KAR:
-                # Midi file: color it red.
-                fg = (180, 72, 72)
-
-            elif self.Type == self.T_CDG:
-                # CDG+MP3: color it blue.
-                fg = (72, 72, 180)
-
-            elif self.Type == self.T_MPG:
-                # MPEG file: color it yellow.
-                fg = (180, 180, 72)
-
-        return fg
-
-
-    def getBackgroundColour(self, selected):
-        """ Returns a suitable colour to use when rendering the
-        background of this song line in the pykaraoke_mini song
-        index. """
-
-        if not selected:
-            bg = (0, 0, 0)
-
-        else:
-            if self.Type == self.T_KAR:
-                # Midi file: color it red.
-                bg = (120, 0, 0)
-
-            elif self.Type == self.T_CDG:
-                # CDG+MP3: color it blue.
-                bg = (0, 0, 120)
-
-            elif self.Type == self.T_MPG:
-                # MPEG file: color it yellow.
-                bg = (120, 120, 0)
-
-        return bg
 
     def getDisplayFilenames(self):
         """ Returns the list of all of the filenames that share the
@@ -530,6 +486,7 @@ class SongStruct:
             return ', '.join(map(lambda f: f.DisplayFilename, self.sameSongs))
         return self.DisplayFilename
 
+
     def getTypeSort(self):
         """Defines a sorting order by type, for sorting the sameSongs
         list. """
@@ -538,12 +495,15 @@ class SongStruct:
         # kar.  This means that MPG files have priority over CDG which
         # have priority over KAR, for the purposes of coloring the
         # files in the mini index.
+        
         return (-self.Type, self.DisplayFilename)
+
 
     def getMarkKey(self):
         """ Returns a key for indexing into markedSongs, for uniquely
         identifying this particular song file. """
         return (self.Filepath, self.ZipStoredName)
+
 
     def __cmp__(self, other):
         """Define a sorting order between SongStruct objects.  This is
@@ -560,10 +520,12 @@ class SongStruct:
             return -1
         return 1
 
+
 class TitleStruct:
     """ This represents a single titles.txt file.  Its filename is
     preserved so it can be rewritten later, to modify a title and/or
     artist associated with a song. """
+
 
     def __init__(self,  Filepath, ZipStoredName = None):
         self.Filepath = Filepath    # Full path to file or ZIP file
@@ -573,6 +535,7 @@ class TitleStruct:
         # This is false unless the titles file has been locally
         # modified and needs to be flushed.
         self.dirty = False
+
 
     def read(self, songDb):
         """ Reads the titles.txt file, and stores the results in the
@@ -587,6 +550,7 @@ class TitleStruct:
                               os.path.join(self.Filepath, self.ZipStoredName))
         else:
             self.__readTitles(songDb, None, self.Filepath)
+
 
     def rewrite(self, songDb):
         """ Rewrites the titles.txt file with the current data. """
@@ -607,6 +571,7 @@ class TitleStruct:
             zip.close()
         else:
             self.__writeTitles(songDb, None, self.Filepath)
+
 
     def __renameZipElement(self, zip, name1, name2 = None):
         """ Renames the file within the archive named "name1" to
@@ -641,6 +606,7 @@ class TitleStruct:
         zinfo.filename = name2
 
         zip.fp.seek(filepos, 0)
+
 
     def __readTitles(self, songDb, catalogFile, catalogPathname):
         self.songs = []
@@ -691,6 +657,7 @@ class TitleStruct:
                     if song.Artist:
                         songDb.GotArtists = True
 
+
     def __makeRelTo(self, filename, relTo):
         """ Returns the filename expressed as a relative path to
         relTo.  Both file paths should be full paths; relTo should
@@ -715,6 +682,7 @@ class TitleStruct:
             filename = backup * (numSlashes - 1) + filename
 
         return filename
+
 
     def __writeTitles(self, songDb, catalogFile, catalogPathname):
         dirname = os.path.split(catalogPathname)[0]
@@ -751,38 +719,6 @@ class TitleStruct:
             line = line.encode('utf-8')
             catalogFile.write(line + '\n')
 
-class FontData:
-    """ This stores the font description selected by the user.
-    Hopefully it is enough information to be used both in wx and in
-    pygame to reference a unique font on the system. """
-
-    def __init__(self, name = None, size = None, bold = False, italic = False):
-        # name may be either a system font name (if size != None) or a
-        # filename (if size == None).
-        self.name = name
-        self.size = size
-        self.bold = bold
-        self.italic = italic
-
-    def __repr__(self):
-        if not self.size:
-            return "FontData(%s)" % (repr(self.name))
-        else:
-            return "FontData(%s, %s, %s, %s)" % (
-                repr(self.name), repr(self.size), repr(self.bold), repr(self.italic))
-
-    def getDescription(self):
-        desc = self.name
-        if self.size:
-            desc += ',%spt' % (self.size)
-        if self.bold:
-            desc += ',bold'
-        if self.italic:
-            desc += ',italic'
-
-        return desc
-
-
 
 # SettingsStruct used as storage only for settings. The instance
 # can be pickled to save all user's settings.
@@ -799,28 +735,6 @@ class SettingsStruct:
         'utf-8',
         ]
 
-    # This is the set of CDG zoom modes.
-    Zoom = [
-        'quick', 'int', 'full', 'soft', 'none',
-        ]
-    ZoomDesc = {
-        'quick' : 'a pixelly scale, maintaining aspect ratio',
-        'int' : 'like quick, reducing artifacts a little',
-        'full' : 'like quick, but stretches to fill the entire window',
-        'soft' : 'a high-quality scale, but may be slow on some hardware',
-        'none' : 'keep the display in its original size',
-        }
-
-    # Some audio cards seem to support only a limited set of sample
-    # rates.  Here are the suggested offerings.
-    SampleRates = [
-        48000,
-        44100,
-        22050,
-        11025,
-        5512,
-        ]
-
     # A list of possible file name deriving combinations.
     # The combination order is stored and used in the parsing algorithm.
     # Track is assumed to be exactly 2 digits.
@@ -831,14 +745,30 @@ class SettingsStruct:
         'Artist-Title'
         ]
 
+
     def __init__(self):
         self.Version = SETTINGS_VERSION
 
         # Set the default settings, in case none are stored on disk
+        # Master volume control
+        self.Volume = 50
+        # Background music timer
+        self.Timer = 3
+        # FX1 - FX0 are the ten pre-defined sound effects buttons
+        self.FX1 = ""
+        self.FX2 = ""
+        self.FX3 = ""
+        self.FX4 = ""
+        self.FX5 = ""
+        self.FX6 = ""
+        self.FX7 = ""
+        self.FX8 = ""
+        self.FX9 = ""
+        self.FX0 = ""
+        
         self.FolderList = []
         self.CdgExtensions = [ '.cdg' ]
-        self.KarExtensions = [ '.kar', '.mid' ]
-        self.MpgExtensions = [ '.mpg', '.mpeg', '.avi' ]
+        self.MpgExtensions = [ '.mp4', '.mpg', '.mpeg', '.avi' ]
         self.IgnoredExtensions = []
         self.LookInsideZips = True
         self.ReadTitlesTxt = True
@@ -850,87 +780,30 @@ class SettingsStruct:
             self.FilesystemCoding = 'iso-8859-1'
         self.ZipfileCoding = 'cp1252'
 
-        self.WindowSize = (640, 480) # Size of the window for PyKaraoke
+        self.WindowSize = (640, 480) # Size of the window for Python Karaoke
         self.FullScreen = False # Determines if the karaoke player should be full screen
         self.NoFrame = False # Determies if the karaoke player should have a window frame.
 
         # SDL specific parameters; some settings may work better on
         # certain hardware than others
-        self.DoubleBuf = True
-        self.HardwareSurface = True
         
-        self.PlayerSize = (640, 480) # Size of the karaoke player
-        self.PlayerPosition = None # Initial position of the karaoke player
+        self.PlayerSize = (640, 400) # Size of the karaoke player
+        self.PlayerPosition = (0,0) # Initial position of the karaoke player
         
-        self.SplitVertically = True
         self.AutoPlayList = True # Enables or disables the auto play on the play-list
         self.DoubleClickPlayList = True # Enables or disables the double click for playing from the play-list
         self.ClearFromPlayList = True # Enables or disables clearing the playlist with a right click on the play list
-        self.Kamikaze = False # Enables or disables the kamikaze button
-        self.UsePerformerName = False # Enables or disables the prompting for a performers name.
+        self.UsePerformerName = True # Enables or disables the prompting for a performers name.
         self.PlayFromSearchList = True # Enables or disables the playing of a song from the search list
-        self.DisplayArtistTitleCols = False # Enables or disables display of artist/title columns
+        self.DisplayArtistTitleCols = True # Enables or disables display of artist/title columns
 
-        self.SampleRate = 44100
-        self.NumChannels = 2
-        self.BufferMs = 50
         self.UseMp3Settings = True
 
-        # This value is a time in milliseconds that will be used to
-        # shift the time of the lyrics display relative to the video.
-        # It is adjusted by the user pressing the left and right
-        # arrows during singing, and is persistent during a session.
-        # Positive values make the lyrics anticipate the music,
-        # negative values delay them.
-        self.SyncDelayMs = 0
-
-        # KAR/MID options
-        self.KarEncoding = 'cp1252'  # Default text encoding in karaoke files
-        self.KarFont = FontData("DejaVuSans.ttf")
-        self.KarBackgroundColour = (0, 0, 0)
-        self.KarReadyColour = (255,50,50)
-        self.KarSweepColour = (255,255,255)
-        self.KarInfoColour = (0, 0, 200)
-        self.KarTitleColour = (100, 100, 255)
-        self.MIDISampleRate = 44100
-
         # CDG options
-        self.CdgZoom = 'int'
-        self.CdgUseC = True
-        self.CdgDeriveSongInformation = False # Determines if we should parse file names for song information
-        self.CdgFileNameType = -1 # The style index we are using for the file name parsing
+        self.CdgDeriveSongInformation = True # Determines if we should parse file names for song information
+        self.CdgFileNameType = 3 # The style index we are using for the file name parsing
         self.ExcludeNonMatchingFilenames = False # Exclude songs from database if can't derive song info
 
-        # MPEG options
-        self.MpgNative = True
-        self.MpgExternalThreaded = True
-        self.MpgExternal = 'mplayer -fs "%(file)s"'
-
-        if env == ENV_WINDOWS:
-            self.MpgExternal = '"C:\\Program Files\\Windows Media Player\\wmplayer.exe" "%(file)s" /play /close /fullscreen'
-        elif env == ENV_GP2X:
-            self.FullScreen = True
-            self.PlayerSize = (320, 240)
-            self.CdgZoom = 'none'
-            # Reduce the default sample rate on the GP2x to save time.
-            self.MIDISampleRate = 11025
-            self.MpgExternal = './mplayer_cmdline "%(file)s"'
-            self.MpgExternalThreaded = False
-            self.BufferMs = 250
-
-            # Define the CPU speed for various activities.  We're
-            # conservative here and avoid overclocking by default.
-            # The user can push these values higher if he knows his
-            # GP2X can handle it.
-            self.CPUSpeed_startup = 240
-            self.CPUSpeed_wait = 33
-            self.CPUSpeed_menu_idle = 33
-            self.CPUSpeed_menu_slow = 100
-            self.CPUSpeed_menu_fast = 240
-            self.CPUSpeed_load = 240
-            self.CPUSpeed_cdg = 200
-            self.CPUSpeed_kar = 240
-            self.CPUSpeed_mpg = 200
 
 # This is a trivial class used to wrap the song database with a
 # version number.
@@ -938,6 +811,7 @@ class DBStruct:
     def __init__(self):
         self.Version = DATABASE_VERSION
         pass
+
 
 # Song database class with methods for building the database, searching etc
 class SongDB:
@@ -983,6 +857,7 @@ class SongDB:
         self.TempDir = self.getTempDirectory()
         self.CleanupTempFiles()
 
+
     def getSaveDirectory(self):
         """ Returns the directory in which the settings files should
         be saved. """
@@ -992,16 +867,11 @@ class SongDB:
         if dir:
             return dir
 
-        if env == ENV_GP2X:
-            # On the GP2X, just save db files in the root directory.
-            # Makes it easier to find them, and avoids directory
-            # clutter.
-            return '.'
-
         # Without PYKARAOKE_DIR, use ~/.pykaraoke.  Try to figure that
         # out.
         homeDir = self.getHomeDirectory()
         return os.path.join(homeDir, ".pykaraoke")
+
 
     def getTempDirectory(self):
         """ Returns the directory in which temporary files should be
@@ -1027,17 +897,17 @@ class SongDB:
         # If we can't find a good temp directory, use our save directory.
         return self.getSaveDirectory()
 
+
     def getHomeDirectory(self):
         """ Returns the user's home directory, if we can figure that
         out. """
 
-        if env != ENV_GP2X:
-            # First attempt: ask wx, if it's available.
-            try:
-                import wx
-                return wx.GetHomeDir()
-            except:
-                pass
+        # First attempt: ask wx, if it's available.
+        try:
+            import wx
+            return wx.GetHomeDir()
+        except:
+            pass
 
             # Second attempt: look in $HOME
             home = os.getenv('HOME')
@@ -1046,6 +916,7 @@ class SongDB:
 
         # Give up and return the current directory.
         return '.'
+
 
     def makeSongStruct(self, filename):
         """ Creates a quick SongStruct representing the indicated
@@ -1130,6 +1001,7 @@ class SongDB:
         bestTitles.dirty = True
         self.databaseDirty = True
 
+
     def LoadSettings (self, errorCallback):
         """ Load the personal settings (but not yet the database). """
 
@@ -1172,13 +1044,14 @@ class SongDB:
                 if loadsettings.Version == SETTINGS_VERSION:
                     self.Settings = loadsettings
                 else:
-                    message = "New version of PyKaraoke, clearing settings"
+                    message = "New version of Python Karaoke, clearing settings"
 
             if message:
                 if errorCallback:
                     errorCallback(message)
                 else:
                     print message
+
 
     def LoadDatabase(self, errorCallback):
         """ Load the saved database. """
@@ -1207,7 +1080,7 @@ class SongDB:
                 self.GotArtists = loaddb.GotArtists
             else:
                 if errorCallback:
-                   errorCallback("New version of PyKaraoke, clearing database")
+                   errorCallback("New version of Python Karaoke, clearing database")
 
         self.databaseDirty = False
 
@@ -1216,6 +1089,7 @@ class SongDB:
 ##         for titles in self.TitlesFiles:
 ##             titles.dirty = True
 ##         self.databaseDirty = True
+
 
     def SaveSettings (self):
         """ Save user settings to the home directory. """
@@ -1240,6 +1114,7 @@ class SongDB:
                 if not k.startswith('__'):
                     value = getattr(self.Settings, k)
                     print >> file, "%s = %s" % (k, repr(value))
+
 
     def SaveDatabase(self):
         """ Save the database to the appropriate directory. """
@@ -1277,9 +1152,11 @@ class SongDB:
             print message
         self.databaseDirty = False
 
+
     def GetSong(self, index):
         """ This returns the song stored in index in the database. """
         return self.FullSongList[index]
+
 
     def BuildSearchDatabase(self, yielder, busyDlg):
         # Zap the database and build again from scratch. Return True
@@ -1289,12 +1166,14 @@ class SongDB:
 
         return self.doSearch(self.Settings.FolderList, yielder, busyDlg)
 
+
     def AddFile(self, filename):
         """Adds just the indicated file to the DB.  If the file is a
         directory or a zip file, recursively scans within it and adds
         all the sub-files. """
 
         self.doSearch([filename], AppYielder(), BusyCancelDialog())
+
 
     def GetZipFile(self, filename):
         """Creates a ZipFile object corresponding to the indicated zip
@@ -1319,6 +1198,7 @@ class SongDB:
         self.ZipFiles.insert(0, (filename, zip))
         return zip
 
+
     def DropZipFile(self, filename):
         """Releases an opened zip file by the indicated filename, if any. """
 
@@ -1328,6 +1208,7 @@ class SongDB:
                 # Here is the zip file in the cache; remove it.
                 self.ZipFiles.remove(tuple)
                 return
+
 
     def doSearch(self, fileList, yielder, busyDlg):
         """ This is the actual implementation of BuildSearchDatabase()
@@ -1393,6 +1274,7 @@ class SongDB:
 
         return cancelled
 
+
     def folderScan (self, FolderToScan, progress, yielder):
         # Search for karaoke files inside the folder, looking inside ZIPs if
         # configured to do so. Function is recursive for subfolders.
@@ -1430,6 +1312,7 @@ class SongDB:
             if self.BusyDlg.Clicked:
                 return
 
+
     def __computeProgressValue(self, progress):
         """ Returns a floating-point value in the range 0 to 1 that
         corresponds to the progress list we have built up while
@@ -1451,6 +1334,7 @@ class SongDB:
                 result += range * (float(i) / float(len))
                 range = range * (1.0 / float(len))
         return result
+
 
     def fileScan(self, full_path, progress, yielder):
         now = time.time()
@@ -1535,18 +1419,22 @@ class SongDB:
                 except:
                     print "Error looking inside zip " + repr(full_path)
 
+
     # Add a folder to the database search list
     def FolderAdd (self, FolderPath):
         if FolderPath not in self.Settings.FolderList:
             self.Settings.FolderList.append(FolderPath)
 
+
     # Remove a folder from the database search list
     def FolderDel (self, FolderPath):
         self.Settings.FolderList.remove(FolderPath)
 
+
     # Get the list of folders currently set up for the database
     def GetFolderList (self):
         return self.Settings.FolderList
+
 
     # Search the database for occurrences of the search terms.
     # If there are multiple terms, all must exist for a match.
@@ -1584,27 +1472,45 @@ class SongDB:
                 ResultsList.append(song)
         return ResultsList
 
+
     # Get the song database size (number of songs)
     def GetDatabaseSize (self):
         return len(self.FullSongList)
+        
+
+    # Check if the passed file extension is configured for this system
+    def IsMyExtensionValid (self, extension):
+        ext = extension.lower()
+        
+        if ext == ".mp3":
+            return True
+
+        if ext == ".mp4":
+            return True 
+            
+        return False           
+
 
     # Check if the passed file extension is configured for this database
     def IsExtensionValid (self, extension):
         ext = extension.lower()
-        if ext in self.Settings.IgnoredExtensions:
-            return False
-        if ext in self.Settings.KarExtensions or \
-           ext in self.Settings.CdgExtensions or \
-           ext in self.Settings.MpgExtensions:
+        
+        if ext == ".cdg":
             return True
+            
+        if ext == ".mp4":
+            return True 
+        
         return False
 
-    # Create a directory for use by PyKaraoke for temporary zip files
+
+    # Create a directory for use by Python Karaoke for temporary zip files
     # and for saving the song database and settings.
     # This will be under the Wx idea of the home directory.
     def CreateTempDir (self):
         if not os.path.exists(self.TempDir):
             os.mkdir (self.TempDir)
+
 
     # Create temporary filename prefix. Returns a path and filename
     # prefix which can be used as a base string for temporary files.
@@ -1615,6 +1521,7 @@ class SongDB:
         self.CreateTempDir()
         full_prefix = os.path.join (self.TempDir, self.TempFilePrefix)
         return full_prefix
+
 
     # Clean up any temporary (unzipped) files on startup/exit/end of song
     def CleanupTempFiles (self):
@@ -1630,6 +1537,7 @@ class SongDB:
                         # pygame.mixer.music which does not release the
                         # file handle until you load another music file.
                         pass
+
 
     def SelectSort(self, sort, allowResort = True):
         """Sorts the list of songs in order according to the indicated
@@ -1712,41 +1620,54 @@ class SongDB:
 
         return True
 
+
     def getSongTupleTitleArtistFilename(self, file):
         return (file.Title, file.Artist, file.getDisplayFilenames())
+
 
     def getSongTupleTitleFilenameArtist(self, file):
         return (file.Title, file.getDisplayFilenames(), file.Artist)
 
+
     def getSongTupleArtistTitleFilename(self, file):
         return (file.Artist, file.Title, file.getDisplayFilenames())
+
 
     def getSongTupleArtistFilenameTitle(self, file):
         return (file.Artist, file.getDisplayFilenames(), file.Title)
 
+
     def getSongTupleFilenameTitleArtist(self, file):
         return (file.DisplayFilename, file.Title, file.Artist)
+
 
     def getSongTupleFilenameArtistTitle(self, file):
         return (file.DisplayFilename, file.Artist, file.Title)
 
+
     def getSongTupleTitleArtistFilenameSortKey(self, file):
         return (file.MakeSortKey(file.Title), file.MakeSortKey(file.Artist), file.getDisplayFilenames().lower(), id(file))
+
 
     def getSongTupleTitleFilenameArtistSortKey(self, file):
         return (file.MakeSortKey(file.Title), file.DisplayFilename.lower(), file.MakeSortKey(file.Artist), id(file))
 
+
     def getSongTupleArtistTitleFilenameSortKey(self, file):
         return (file.MakeSortKey(file.Artist), file.MakeSortKey(file.Title), file.DisplayFilename.lower(), id(file))
+
 
     def getSongTupleArtistFilenameTitleSortKey(self, file):
         return (file.MakeSortKey(file.Artist), file.DisplayFilename.lower(), file.MakeSortKey(file.Title), id(file))
 
+
     def getSongTupleFilenameTitleArtistSortKey(self, file):
         return (file.DisplayFilename.lower(), file.MakeSortKey(file.Title), file.MakeSortKey(file.Artist), id(file))
 
+
     def getSongTupleFilenameArtistTitleSortKey(self, file):
         return (file.DisplayFilename.lower(), file.MakeSortKey(file.Artist), file.MakeSortKey(file.Title), id(file))
+
 
     def addSong(self, file):
         self.FullSongList.append(file)
@@ -1764,6 +1685,7 @@ class SongDB:
                 name = file.ZipStoredName.replace('/', os.path.sep)
                 fullpath = os.path.join(fullpath, name)
             self.filesByFullpath[fullpath] = file
+
 
     def checkFileHashes(self, yielder):
         """ Walks through self.FullSongList, checking for md5 hashes
@@ -1844,6 +1766,7 @@ class SongDB:
             if i not in removeIndexes:
                 newSongList.append(self.FullSongList[i])
         self.FullSongList = newSongList
+
 
     def makeUniqueSongs(self):
         """ Walks through self.FullSongList, and builds up

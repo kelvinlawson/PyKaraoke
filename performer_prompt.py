@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
-# performer_prompt - Karaoke Performer Request
-#
+# Python karaoke performer prompt
+
 #******************************************************************************
-#****                                                                      ****
-#**** Copyright (C) 2010  PyKaraoke Development Team                       ****
+#**** Copyright (C) 2018  Ken Williams GW3TMH (ken@kensmail.uk)            ****
+#**** Copyright (C) 2010  Kelvin Lawson (kelvinl@users.sourceforge.net)    ****
+#**** Copyright (C) 2010  Python Karaoke Development Team                  ****
 #****                                                                      ****
 #**** This library is free software; you can redistribute it and/or        ****
 #**** modify it under the terms of the GNU Lesser General Public           ****
 #**** License as published by the Free Software Foundation; either         ****
-#**** version 2.1 of the License, or (at your option) any later version.   ****
+#**** version 3 of the License, or (at your option) any later version.     ****
 #****                                                                      ****
 #**** This library is distributed in the hope that it will be useful,      ****
 #**** but WITHOUT ANY WARRANTY; without even the implied warranty of       ****
@@ -29,12 +30,12 @@ class PerformerPrompt(wx.Dialog):
     """ An interface for requesting a performer's name. """
     def __init__(self, parent):
         """ Creates the interface. """
-        wx.Dialog.__init__(self, parent, -1, "Karaoke Performer Prompt")
+        wx.Dialog.__init__(self, parent, -1, "Karaoke Performer ?")
 
         # Add the performer prompt
-        self.PerformerText = wx.StaticText(self, wx.ID_ANY, "Performer Name:")
+        self.PerformerText = wx.StaticText(self, wx.ID_ANY, "Name:")
         self.PerformerID = wx.NewId()
-        self.PerformerTxtCtrl = wx.TextCtrl(self, self.PerformerID, "", size=(150, 20), style=wx.TE_PROCESS_ENTER)
+        self.PerformerTxtCtrl = wx.TextCtrl(self, self.PerformerID, "", size=(150, 25), style=wx.TE_PROCESS_ENTER)
         self.PerformerSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.PerformerSizer.Add(self.PerformerText, 0, wx.ALL)
         self.PerformerSizer.Add(self.PerformerTxtCtrl, 0, wx.ALL)
@@ -43,6 +44,7 @@ class PerformerPrompt(wx.Dialog):
         self.ButtonSizer = self.CreateButtonSizer(wx.OK | wx.CANCEL)
         self.Bind(wx.EVT_BUTTON, self.onOK, id = wx.ID_OK)
         self.Bind(wx.EVT_BUTTON, self.onCANCEL, id = wx.ID_CANCEL)
+        self.PerformerTxtCtrl.Bind(wx.EVT_TEXT_ENTER, self.onENTER, id = wx.ID_ANY)
 
         # Create GUI with Sizers
         self.MainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -52,11 +54,17 @@ class PerformerPrompt(wx.Dialog):
 
         self.performer = ""
         self.PerformerTxtCtrl.SetFocus()
+        
+    def onENTER(self, event):
+        """ Sets the performer entered and closes the dialogue. """
+        self.performer = self.PerformerTxtCtrl.GetValue()
+        self.EndModal(wx.ID_OK)
+        return True
 
     def onCANCEL(self, event):
         """ Sets the performer entered and closes the dialogue. """
         self.performer = ""
-        self.EndModal(wx.ID_CANCEL)
+        self.EndModal(wx.ID_OK)
         return False
 
     def onOK(self, event):
